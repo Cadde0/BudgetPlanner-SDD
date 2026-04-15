@@ -1,50 +1,55 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report:
+- Version change: (none) → 1.0.0
+- Modified principles: All placeholders replaced with project-specific content
+- Added sections: Technology Stack, Development Workflow
+- Removed sections: None
+- Templates requiring updates: plan-template.md (✅ updated), spec-template.md (✅ updated), tasks-template.md (✅ updated)
+- Follow-up TODOs: RATIFICATION_DATE (needs confirmation)
+-->
+
+# Budget Planner Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Spec-Anchored Development
+The project uses a spec-anchored approach: specifications are closely followed and actively maintained throughout the entire project lifecycle. Specifications are not only a guide for implementation, but also serve as the basis for code verification. As code is updated, specifications are updated in parallel to ensure they accurately represent the implemented system. Tests are constructed directly from the specifications, so any divergence between code and specs is detected immediately. 
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Simplicity and Usability
+The application MUST be easy to use without instructions. User flows and interfaces must be intuitive and require no external guidance.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. One-Feature-at-a-Time & Testing Discipline
+Each feature MUST be implemented on its own branch, tested individually with JUnit, and merged into main only after passing all relevant tests. No feature is merged without full test coverage and review.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Documentation and Maintainability
+All code MUST be clearly documented. The codebase MUST be easily understood and maintainable by any developer familiar with Java and Spring Boot.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Strict SDD Workflow Compliance
+All implementation and development MUST strictly follow SDD and the SDD workflow. No deviations are permitted without explicit amendment to this constitution.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Technology Stack
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+- Java (with Spring Boot)
+- PostgreSQL (local database)
+- Docker (for environment and deployment)
+- JUnit (testing)
+- Maven (build and dependency management)
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Development Workflow
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+- Every feature starts with a clear, unambiguous specification.
+- Each feature is developed on a separate branch.
+- All code is documented and reviewed.
+- Features are tested individually (JUnit) and only merged to main after passing all tests.
+- The codebase is kept simple, maintainable, and easy to understand.
+- Only one feature is developed and merged at a time.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+- This constitution supersedes all other practices and guides all development.
+- Amendments require documentation, team approval, and a migration plan if breaking changes are introduced.
+- All pull requests and reviews MUST verify compliance with these principles and workflow.
+- Versioning follows semantic versioning: MAJOR for breaking changes, MINOR for new principles/sections, PATCH for clarifications.
+- Compliance reviews are mandatory for every merge to main.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-04-14 | **Last Amended**: 2026-04-14
