@@ -81,7 +81,7 @@ As a user, I want to enter my income, create/edit/delete categories, and update 
 
 ## Success Criteria
 - All functional and non-functional requirements are met.
-- All user stories are independently testable and pass acceptance scenarios.
+- All defined phases and acceptance scenarios are independently testable and pass.
 - The system is easy to use, loads quickly, and prevents invalid input.
 - The specifications and code remain aligned throughout development (spec-anchored approach).
 - A feature is considered done when it passes all tests derived from the specification and is reviewed/approved for clarity and usability.

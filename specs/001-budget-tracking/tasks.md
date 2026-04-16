@@ -1,7 +1,7 @@
 # Tasks: Budget Tracking & Expense Management
 
 **Input**: Design documents from `/specs/001-budget-tracking/`
-**Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
+**Prerequisites**: plan.md (required), spec.md (required for requirements and acceptance scenarios), research.md, data-model.md, contracts/
 
 ## Phase 1: Setup (Shared Infrastructure)
 
@@ -52,13 +52,13 @@
 - [ ] T024 [P] Review and improve error messages and validation feedback
 - [ ] T025 [P] Manual usability test: verify system is easy to use without instructions
 - [ ] T026 [P] Performance test: verify system loads all data within 2 seconds and handles 50 transactions
-- [ ] T027 [P] Final code review and merge to main after all tests pass
+- [ ] T027 [P] Final code review: verify every task branch was merged only after that task passed tests
 
 ## Dependencies
 
-- Foundational tasks (T004-T008) must be completed before user story phases
-- User stories can be developed in order (P1 → P2 → P3)
-- Polish phase can be done in parallel after user stories
+- Foundational tasks (T004-T008) must be completed before phase-specific implementation tasks
+- Phase tasks should be completed in order (Phase 1 → Phase 2 → Phase 3)
+- Polish phase can be done in parallel after phase-specific implementation tasks
 
 ## Parallel Execution Examples
 
@@ -67,6 +67,6 @@
 
 ## Implementation Strategy
 
-- MVP: Complete all P1 (User Story 1) tasks first
+- MVP: Complete all Phase 1 tasks first
 - Test each functionality immediately after implementation, before starting the next task. This ensures consistency and that the code works as intended.
-- Incremental delivery: Merge each user story after all its tasks and tests pass
+- Incremental delivery: Use one branch per task and merge each task after its tests pass

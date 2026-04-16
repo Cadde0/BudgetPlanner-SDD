@@ -13,18 +13,23 @@ Sync Impact Report:
 ## Core Principles
 
 ### I. Spec-Anchored Development
-The project uses a spec-anchored approach: specifications are closely followed and actively maintained throughout the entire project lifecycle. Specifications are not only a guide for implementation, but also serve as the basis for code verification. As code is updated, specifications are updated in parallel to ensure they accurately represent the implemented system. Tests are constructed directly from the specifications, so any divergence between code and specs is detected immediately. 
+
+The project uses a spec-anchored approach: specifications are closely followed and actively maintained throughout the entire project lifecycle. Specifications are not only a guide for implementation, but also serve as the basis for code verification. As code is updated, specifications are updated in parallel to ensure they accurately represent the implemented system. Tests are constructed directly from the specifications, so any divergence between code and specs is detected immediately.
 
 ### II. Simplicity and Usability
+
 The application MUST be easy to use without instructions. User flows and interfaces must be intuitive and require no external guidance.
 
-### III. One-Feature-at-a-Time & Testing Discipline
-Each feature MUST be implemented on its own branch, tested individually with JUnit, and merged into main only after passing all relevant tests. No feature is merged without full test coverage and review.
+### III. One-Task-at-a-Time & Testing Discipline
+
+Each task MUST be implemented on its own branch, tested individually with JUnit, and merged into main only after that task passes all relevant tests. No task is merged without test evidence and review.
 
 ### IV. Documentation and Maintainability
+
 All code MUST be clearly documented. The codebase MUST be easily understood and maintainable by any developer familiar with Java and Spring Boot.
 
 ### V. Strict SDD Workflow Compliance
+
 All implementation and development MUST strictly follow SDD and the SDD workflow. No deviations are permitted without explicit amendment to this constitution.
 
 ## Technology Stack
@@ -38,11 +43,11 @@ All implementation and development MUST strictly follow SDD and the SDD workflow
 ## Development Workflow
 
 - Every feature starts with a clear, unambiguous specification.
-- Each feature is developed on a separate branch.
+- Each task is developed on a separate branch.
 - All code is documented and reviewed.
-- Features are tested individually (JUnit) and only merged to main after passing all tests.
+- Each task is tested individually (JUnit) and merged to main only after passing all relevant tests.
 - The codebase is kept simple, maintainable, and easy to understand.
-- Only one feature is developed and merged at a time.
+- Only one task is developed and merged at a time.
 
 ## Governance
 

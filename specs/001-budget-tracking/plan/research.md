@@ -31,7 +31,7 @@
 - Use existing PostgreSQL database, schema to be confirmed
 - Use JdbcTemplate for all DB access
 - Document code with Javadocs
-- Implement and test one feature at a time
+- Implement and test one task at a time
 
 ## Alternatives Considered
 
