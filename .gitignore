@@ -1,0 +1,24 @@
+# Java and Maven build outputs
+target/
+build/
+.gradle/
+out/
+*.class
+*.jar
+
+# IDE and editor settings
+.idea/
+.vscode/
+*.iml
+*.user
+*.suo
+
+# Environment and logs
+.env*
+*.log
+
+# OS and temporary files
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
