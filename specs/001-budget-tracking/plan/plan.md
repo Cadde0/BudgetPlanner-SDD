@@ -53,7 +53,7 @@ src/
 │   │   └── [your/package/structure]/
 │   │       ├── model/
 │   │       ├── repository/
-│   │       ├── service/
+│   │       ├── application/
 │   │       ├── controller/
 │   │       └── BudgetPlannerApplication.java
 │   └── resources/
@@ -63,7 +63,7 @@ src/
         └── [your/package/structure]/
             ├── model/
             ├── repository/
-            ├── service/
+            ├── application/
             └── controller/
 ```
 

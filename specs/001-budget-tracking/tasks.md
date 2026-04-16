@@ -7,21 +7,20 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create project structure as per plan.md (src/main/java/[package]/model, repository, service, controller)
+- [x] T001 Create project structure as per plan.md (src/main/java/[package]/model, repository, application, controller)
 - [ ] T002 Configure PostgreSQL connection in src/main/resources/application.properties
 - [ ] T003 [P] Add Maven dependencies for Spring Boot, JdbcTemplate, JUnit
 
 ---
-
 
 ## Phase 2: Core Implementation
 
 **Purpose**: Core infrastructure and all functional requirements
 
 - [ ] T004 Implement Income, Expense, and Category models in src/main/java/[package]/model (see data-model.md)
-- [ ] T005 [P] Implement validation logic (no negative values, unique category names, positive amounts) in model/service layer (see data-model.md)
+- [ ] T005 [P] Implement validation logic (no negative values, unique category names, positive amounts) in model/application layer (see data-model.md)
 - [ ] T006 [P] Create repository classes for Income, Expense, Category using JdbcTemplate (see data-model.md)
-- [ ] T007 Setup error handling and logging in service/controller layers
+- [ ] T007 Setup error handling and logging in application/controller layers
 - [ ] T008 Configure test environment and write base JUnit test in src/test/java/[package]/
 
 ---
@@ -32,16 +31,16 @@
 
 - [ ] T009 [P] Implement ExpenseController endpoints (see contracts/api.md)
 - [ ] T010 [P] Implement CategoryController endpoints (see contracts/api.md)
-- [ ] T011 Implement service logic for adding, updating, deleting expenses and categories
+- [ ] T011 Implement application logic for adding, updating, deleting expenses and categories
 - [ ] T012 Implement summary logic for expenses by category
 - [ ] T013 Write JUnit tests for Expense and Category endpoints and logic
 - [ ] T014 Implement frontend UI for entering expenses and viewing category summaries (shown on localhost)
 - [ ] T015 Extend Category model and endpoints to support category_limit (see data-model.md, contracts/api.md)
-- [ ] T016 Implement logic to update and enforce category limits in service layer
+- [ ] T016 Implement logic to update and enforce category limits in application layer
 - [ ] T017 Implement real-time budget calculation and warning logic in frontend
 - [ ] T018 Write JUnit tests for budget limit logic and endpoints
 - [ ] T019 Implement IncomeController endpoints (see contracts/api.md)
-- [ ] T020 Implement service logic for adding, updating, deleting income
+- [ ] T020 Implement application logic for adding, updating, deleting income
 - [ ] T021 Implement frontend UI for income and category management
 - [ ] T022 Write JUnit tests for income and category management
 
@@ -56,15 +55,18 @@
 - [ ] T027 [P] Final code review and merge to main after all tests pass
 
 ## Dependencies
+
 - Foundational tasks (T004-T008) must be completed before user story phases
 - User stories can be developed in order (P1 → P2 → P3)
 - Polish phase can be done in parallel after user stories
 
 ## Parallel Execution Examples
+
 - T005, T006, T007 can be done in parallel after T004
 - T009, T010, T013, T014 can be done in parallel after foundational phase
 
 ## Implementation Strategy
+
 - MVP: Complete all P1 (User Story 1) tasks first
 - Test each functionality immediately after implementation, before starting the next task. This ensures consistency and that the code works as intended.
 - Incremental delivery: Merge each user story after all its tasks and tests pass
