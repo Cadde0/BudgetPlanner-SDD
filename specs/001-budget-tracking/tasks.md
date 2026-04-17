@@ -9,7 +9,7 @@
 
 - [x] T001 Create project structure as per plan.md (src/main/java/[package]/model, repository, application, controller)
 - [x] T002 Configure PostgreSQL connection in src/main/resources/application.properties
-- [ ] T003 [P] Add Maven dependencies for Spring Boot, JdbcTemplate, JUnit
+- [x] T003 [P] Add Maven dependencies for Spring Boot, JdbcTemplate, JUnit
 
 ---
 
