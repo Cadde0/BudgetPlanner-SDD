@@ -7,7 +7,7 @@
 
 - PostgreSQL schema (tables/columns) for income, expenses, and categories is confirmed and matches the data model.
 - Package structure will follow the structure defined in the implementation plan (model, repository, application, controller).
-- Validation rules are defined: no negative values are allowed for income or expenses, category names must be unique, and amounts must be positive decimals.
+- Validation rules are defined: no negative values are allowed for income or expenses, category names must be unique, and amounts must be positive integers.
 - There will be a frontend, which will be shown in the localhost environment.
 
 ## Best Practices
@@ -42,5 +42,5 @@
 
 - PostgreSQL schema (tables/columns) for income, expenses, and categories is confirmed and matches the data model.
 - Package structure will follow the structure defined in the implementation plan (model, repository, application, controller).
-- Validation rules are defined: no negative values are allowed for income or expenses, category names must be unique, and amounts must be positive decimals.
+- Validation rules are defined: no negative values are allowed for income or expenses, category names must be unique, and amounts must be positive integers.
 - There will be a frontend, which will be shown in the localhost environment.
