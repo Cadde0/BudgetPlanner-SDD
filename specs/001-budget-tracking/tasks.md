@@ -17,7 +17,7 @@
 
 **Purpose**: Core infrastructure and all functional requirements
 
-- [ ] T004 Implement Income, Expense, and Category models in src/main/java/[package]/model (see data-model.md)
+- [x] T004 Implement Income, Expense, and Category models in src/main/java/[package]/model (see data-model.md)
 - [ ] T005 [P] Implement validation logic (no negative values, unique category names, positive amounts) in model/application layer (see data-model.md)
 - [ ] T006 [P] Create repository classes for Income, Expense, Category using JdbcTemplate (see data-model.md)
 - [ ] T007 Setup error handling and logging in application/controller layers
