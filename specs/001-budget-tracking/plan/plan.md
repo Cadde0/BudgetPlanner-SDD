@@ -2,13 +2,21 @@
 
 **Branch**: `[001-budget-tracking]` | **Date**: 2026-04-14 | **Spec**: [specs/001-budget-tracking/spec.md](specs/001-budget-tracking/spec.md)
 **Input**: Feature specification from `/specs/001-budget-tracking/spec.md`
-**Note**: Implementation is organized by functional requirements and task-based phases.
+**Note**: Implementation is organized by specification phases and verified by task groups.
 
 **Note**: This plan follows the SDD and spec-anchored workflow. Only one task is implemented and tested at a time. Documentation must follow Javadocs.
 
 ## Summary
 
 The Budget Planner enables users to track expenses, categorize them, set and monitor budget limits, and manage income and categories. The application uses Spring Boot and an existing PostgreSQL database for all data storage and retrieval. Database access will use Spring's JdbcTemplate for simplicity and maintainability. All tasks are implemented and tested one at a time, with documentation following Javadocs.
+
+## Phase Alignment
+
+- Phase 1 - Track and Categorize Expenses: expense/category CRUD, category summaries, and related tests/UI flow
+- Phase 2 - Set and Monitor Budget Limits: category limits, real-time remaining budget logic, warnings, and related tests
+- Phase 3 - Manage Income and Categories: income CRUD and complete category lifecycle support with tests/UI flow
+
+This plan is intentionally aligned with the phase model defined in `spec.md` and reflected in `tasks.md`.
 
 ## Technical Context
 
