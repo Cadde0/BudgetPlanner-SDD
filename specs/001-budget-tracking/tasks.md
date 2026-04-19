@@ -22,8 +22,8 @@
 - [x] T006 [P] Create read-only repository access classes for Income, Expense, Category using JdbcTemplate (see data-model.md)
 - [x] T007 Setup error handling and logging in application/controller layers
 - [x] T008 Configure test environment and verify baseline JUnit unit/integration tests in src/test/java/[package]/
-- [ ] T009 [P] Implement ExpenseController endpoints (see contracts/api.md)
-- [ ] T010 [P] Implement CategoryController endpoints (see contracts/api.md)
+- [x] T009 [P] Implement read-only ExpenseController endpoints (GET /expenses, GET /expenses/{id})
+- [ ] T010 [P] Implement read-only CategoryController endpoints (see contracts/api.md)
 - [ ] T011 Implement application logic for adding, updating, deleting expenses and categories
 - [ ] T012 Implement summary logic for expenses by category
 - [ ] T013 Write JUnit tests for Expense and Category endpoints and logic
