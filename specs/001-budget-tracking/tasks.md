@@ -20,7 +20,7 @@
 - [x] T004 Implement Expense and Category models in src/main/java/[package]/model (see data-model.md)
 - [x] T005 [P] Implement validation logic for expense/category flows (no negative values, unique category names, positive amounts) in model/application layer (see data-model.md)
 - [x] T006 [P] Create read-only repository access classes for Income, Expense, Category using JdbcTemplate (see data-model.md)
-- [ ] T007 Setup error handling and logging in application/controller layers
+- [x] T007 Setup error handling and logging in application/controller layers
 - [ ] T008 Configure test environment and write base JUnit test in src/test/java/[package]/
 - [ ] T009 [P] Implement ExpenseController endpoints (see contracts/api.md)
 - [ ] T010 [P] Implement CategoryController endpoints (see contracts/api.md)
