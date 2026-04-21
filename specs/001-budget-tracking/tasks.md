@@ -17,7 +17,7 @@ Layer intent:
 - Task IDs are strictly ordered top-to-bottom in this document and are not reused across different requirements.
 - Tests are embedded in each functionality task and are not tracked as separate standalone tasks.
 
-1. [ ] Access the local database (FR-001): T004, T005, T006, T007, T008, T009, T010, T011, T012
+1. [x] Access the local database (FR-001): T004, T005, T006, T007, T008, T009, T010, T011, T012
 2. [ ] Enter income (FR-002): T013, T014, T015
 3. [ ] Categorize expenses (FR-003): T016, T017
 4. [ ] Edit/delete categories (FR-004): T018, T019, T020
