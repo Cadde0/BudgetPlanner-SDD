@@ -3,7 +3,7 @@
 **Input**: Design documents from `/specs/001-budget-tracking/`
 **Prerequisites**: plan.md (required), spec.md (required for requirements and acceptance scenarios), research.md, data-model.md, contracts/
 
-**Branching Rule**: A new feature branch must be created for every task (e.g., `task/T010-income-controller`). All work for that task must be committed to its branch before merging.
+**Branching Rule**: A new feature branch must be created for every task (e.g., `task/T010-income-controller`). All work for that task must be committed to its branch before merging. The new branch must be created from main.
 
 ## Functional Requirement Execution Order
 
