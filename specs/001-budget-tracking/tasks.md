@@ -48,7 +48,7 @@ Layer intent:
 - [x] Step 4 (T007) Setup error handling and logging in application/controller layers
 - [x] Step 5 (T008) Configure test environment and verify baseline JUnit unit/integration tests in src/test/java/[package]/
 - [x] Step 6 (T009) [P] Implement read-only ExpenseController endpoints (GET /expenses, GET /expenses/{id})
-- [] Step 7 (T010) [P] Implement read-only IncomeController endpoints (GET /income)
+- [x] Step 7 (T010) [P] Implement read-only IncomeController endpoints (GET /income)
 - [x] Step 8 (T011) [P] Implement read-only CategoryController endpoints (GET /categories, GET /categories/{id})
 - [ ] Step 9 (T012) Run cross-layer integration test for FR-001 read flow
 
