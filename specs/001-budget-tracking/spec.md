@@ -7,48 +7,168 @@
 
 ## Phases & Testing
 
-### Phase 1 - Track and Categorize Expenses
+### Phase 1 - Access the Local Database
 
-As a user, I want to enter my expenses and assign them to categories so I can see where my money goes and get an overview by category.
+As a user, I want the application to connect to the local database so I can read existing budget data.
 
-**Why this priority**: This is the core value of the application—tracking and categorizing expenses enables all other features.
+**Why this priority**: Database access is the foundation for every later feature.
 
-**Independent Test**: Enter expenses in different categories and verify that they are saved, displayed, and summarized by category.
+**Independent Test**: Start the application, call the read endpoints, and verify that data is loaded from the database.
 
 **Acceptance Scenarios**:
 
-1. **Given** the app is open, **When** I enter a new expense and select a category, **Then** the expense is saved and shown in the correct category.
-2. **Given** I have entered multiple expenses, **When** I view the summary, **Then** I see totals for each category.
+1. **Given** the app is running, **When** I request expenses, income, or categories, **Then** I receive data from the local database.
+2. **Given** a record exists in the database, **When** I request it by id, **Then** the record is returned.
 
 ---
 
-### Phase 2 - Set and Monitor Budget Limits
+### Phase 2 - Enter Income
 
-As a user, I want to set a budget limit and see my remaining budget in real time so I can avoid overspending.
+As a user, I want to enter income so it can be stored and used in budget calculations.
 
-**Why this priority**: Helps users control spending and provides immediate feedback on their financial status.
+**Why this priority**: Income is required before budget calculations can be meaningful.
 
-**Independent Test**: Set a budget limit, enter expenses, and verify that the remaining budget updates instantly and warnings are shown if the limit is exceeded.
+**Independent Test**: Add income and verify that it is persisted and retrievable through the application.
 
 **Acceptance Scenarios**:
 
-1. **Given** a budget limit is set, **When** I enter a new expense, **Then** the remaining budget updates instantly.
-2. **Given** my expenses exceed the limit, **When** I enter another expense, **Then** I am warned or prevented from exceeding the budget.
+1. **Given** I have income to add, **When** I submit it, **Then** it is saved to the database.
+2. **Given** income exists, **When** I view it through the application, **Then** the stored values are returned.
 
 ---
 
-### Phase 3 - Manage Income and Categories
+### Phase 3 - Categorize Expenses
 
-As a user, I want to enter my income, create/edit/delete categories, and update or delete expenses so I can keep my budget organized and accurate.
+As a user, I want to assign expenses to categories so I can organize spending.
 
-**Why this priority**: Enables flexibility and accuracy in budget management.
+**Why this priority**: Category assignment is needed for summaries and later budget controls.
 
-**Independent Test**: Add income, create/edit/delete categories, update/delete expenses, and verify that all changes are reflected in the database and UI.
+**Independent Test**: Assign an expense to a category and verify the relationship is stored and returned.
 
 **Acceptance Scenarios**:
 
-1. **Given** I have income to add, **When** I enter it, **Then** it is saved and included in calculations.
-2. **Given** I want to change a category or expense, **When** I edit or delete it, **Then** the change is saved and reflected everywhere.
+1. **Given** an expense and a category exist, **When** I assign the expense to the category, **Then** the link is stored.
+2. **Given** a categorized expense exists, **When** I read it back, **Then** the category is included.
+
+---
+
+### Phase 4 - Edit/Delete Categories
+
+As a user, I want to edit and delete categories so I can keep category data accurate.
+
+**Why this priority**: Category maintenance is necessary before expense management becomes complete.
+
+**Independent Test**: Update and delete a category, then verify the changes are reflected in the database and application output.
+
+**Acceptance Scenarios**:
+
+1. **Given** a category exists, **When** I edit it, **Then** the updated values are saved.
+2. **Given** a category is no longer needed, **When** I delete it, **Then** it is removed from the database.
+
+---
+
+### Phase 5 - Add Expenses
+
+As a user, I want to add expenses so I can track spending in the database.
+
+**Why this priority**: Expense creation is the core input for all later calculations.
+
+**Independent Test**: Add an expense and verify it is stored and accessible through the application.
+
+**Acceptance Scenarios**:
+
+1. **Given** I have a new expense, **When** I add it, **Then** it is saved.
+2. **Given** an expense exists, **When** I read it back, **Then** the stored values are returned.
+
+---
+
+### Phase 6 - Update Expenses
+
+As a user, I want to update expenses so I can correct spending records.
+
+**Why this priority**: Expense updates support accurate budgeting and record keeping.
+
+**Independent Test**: Update an expense and verify the new values are stored and returned.
+
+**Acceptance Scenarios**:
+
+1. **Given** an expense exists, **When** I update it, **Then** the new data is saved.
+2. **Given** I read the expense back, **When** the update is complete, **Then** the updated values are returned.
+
+---
+
+### Phase 7 - Delete Expenses
+
+As a user, I want to delete expenses so I can remove incorrect or outdated records.
+
+**Why this priority**: Deleting expenses keeps the database clean and reliable.
+
+**Independent Test**: Delete an expense and verify that it no longer exists in the database or application output.
+
+**Acceptance Scenarios**:
+
+1. **Given** an expense exists, **When** I delete it, **Then** it is removed from the database.
+2. **Given** I request the deleted expense, **When** it is no longer present, **Then** the application does not return it.
+
+---
+
+### Phase 8 - Perform Arithmetic Operations
+
+As a user, I want the system to calculate totals so I can understand my finances.
+
+**Why this priority**: Arithmetic logic powers summaries and budget reporting.
+
+**Independent Test**: Add sample data and verify the calculated totals are correct.
+
+**Acceptance Scenarios**:
+
+1. **Given** income and expenses exist, **When** calculations run, **Then** the totals are correct.
+2. **Given** category totals are requested, **When** the arithmetic runs, **Then** the values match the stored data.
+
+---
+
+### Phase 9 - Present Remaining Budget in Real Time
+
+As a user, I want the remaining budget to update immediately so I can track spending live.
+
+**Why this priority**: Real-time feedback helps prevent overspending.
+
+**Independent Test**: Change income or expenses and verify the remaining budget updates without delay.
+
+**Acceptance Scenarios**:
+
+1. **Given** income and expenses are present, **When** a value changes, **Then** the remaining budget updates.
+2. **Given** a budget view is open, **When** new data is saved, **Then** the displayed remaining budget changes accordingly.
+
+---
+
+### Phase 10 - Summarize Within Categories
+
+As a user, I want category summaries so I can see where money is being spent.
+
+**Why this priority**: Category summaries are needed for reporting and analysis.
+
+**Independent Test**: Group expenses by category and verify the totals are correct.
+
+**Acceptance Scenarios**:
+
+1. **Given** multiple expenses exist, **When** I view summaries, **Then** I see totals per category.
+2. **Given** category totals are calculated, **When** I compare them to the underlying expenses, **Then** the numbers match.
+
+---
+
+### Phase 11 - Set a Budget Limit
+
+As a user, I want to set a budget limit so I can control spending.
+
+**Why this priority**: Budget limits are the final control layer for spending awareness.
+
+**Independent Test**: Set a budget limit and verify that calculations and warnings reflect it.
+
+**Acceptance Scenarios**:
+
+1. **Given** a category limit exists, **When** I update it, **Then** the new limit is saved.
+2. **Given** spending exceeds the limit, **When** the system recalculates, **Then** the limit status is reflected.
 
 ---
 
@@ -67,7 +187,7 @@ As a user, I want to enter my income, create/edit/delete categories, and update 
 - **FR-003**: Users MUST be able to enter income.
 - **FR-004**: Users MUST be able to categorize expenses.
 - **FR-005**: Users MUST be able to edit and delete categories.
-- **FR-006**: Users MUST be able to enter expenses.
+- **FR-006**: Users MUST be able to add expenses.
 - **FR-007**: Users MUST be able to update expenses.
 - **FR-008**: Users MUST be able to delete expenses.
 - **FR-009**: System MUST perform arithmetic operations.
