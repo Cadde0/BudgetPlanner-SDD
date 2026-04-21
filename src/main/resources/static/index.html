@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Budget Planner</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Budget planner dashboard</p>
+          <h1>Track income and review categories in one place.</h1>
+          <p class="lede">
+            Manage income records, inspect category totals, and keep the budget
+            data easy to read.
+          </p>
+        </div>
+        <div class="hero-stats" id="heroStats" aria-live="polite"></div>
+      </section>
+
+      <section class="banner" id="statusBanner" aria-live="polite"></section>
+
+      <section class="grid">
+        <article class="panel panel-wide">
+          <div class="panel-header">
+            <div>
+              <p class="panel-kicker">Income management</p>
+              <h2>Add, edit, and remove income entries.</h2>
+            </div>
+            <button class="ghost-button" type="button" id="refreshIncomeButton">
+              Refresh
+            </button>
+          </div>
+
+          <form class="entry-form" id="incomeForm">
+            <input type="hidden" id="incomeId" />
+            <label>
+              Amount
+              <input
+                type="number"
+                id="incomeAmount"
+                min="1"
+                step="1"
+                placeholder="2500"
+                required />
+            </label>
+            <div class="form-actions">
+              <button
+                type="submit"
+                class="primary-button"
+                id="incomeSubmitButton">
+                Save income
+              </button>
+              <button
+                type="button"
+                class="secondary-button"
+                id="incomeCancelButton"
+                hidden>
+                Cancel edit
+              </button>
+            </div>
+          </form>
+
+          <div class="table-wrap">
+            <table class="data-table" aria-label="Income entries">
+              <thead>
+                <tr>
+                  <th>Amount</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="incomeTableBody">
+                <tr>
+                  <td colspan="3" class="empty-state">Loading income...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <aside class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="panel-kicker">Category overview</p>
+              <h2>See how categories are structured.</h2>
+            </div>
+            <button
+              class="ghost-button"
+              type="button"
+              id="refreshCategoryButton">
+              Refresh
+            </button>
+          </div>
+
+          <div class="summary-stack" id="categorySummaryList">
+            <div class="empty-state">Loading categories...</div>
+          </div>
+        </aside>
+
+        <aside class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="panel-kicker">Budget snapshot</p>
+              <h2>Quick numbers from the live data.</h2>
+            </div>
+          </div>
+
+          <div class="snapshot-grid" id="snapshotGrid"></div>
+        </aside>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
