@@ -51,7 +51,7 @@ Layer intent:
 - [x] Step 6 (T009) [P] Implement read-only ExpenseController endpoints (GET /expenses, GET /expenses/{id})
 - [x] Step 7 (T010) [P] Implement read-only IncomeController endpoints (GET /income)
 - [x] Step 8 (T011) [P] Implement read-only CategoryController endpoints (GET /categories, GET /categories/{id})
-- [ ] Step 9 (T012) Run cross-layer integration test for FR-001 read flow
+- [x] Step 9 (T012) Run cross-layer integration test for FR-001 read flow
 
 ---
 
