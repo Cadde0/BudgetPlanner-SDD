@@ -18,17 +18,16 @@ Layer intent:
 - Tests are embedded in each functionality task and are not tracked as separate standalone tasks.
 
 1. [ ] Access the local database (FR-001): T004, T005, T006, T007, T008, T009, T010, T011, T012
-2. [ ] Enter income (FR-003): T013, T014, T015
-3. [ ] Categorize expenses (FR-004): T016, T017
-4. [ ] Edit/delete categories (FR-005): T018, T019, T020
-5. [ ] Add expenses (FR-006): T021, T022, T023, T024
-6. [ ] Update expenses (FR-007): T025, T026
-7. [ ] Delete expenses (FR-008): T027, T028
-8. [ ] Perform arithmetic operations (FR-009): T029, T030, T031
-9. [ ] Present remaining budget in real time (FR-010): T032, T033, T034
-10. [ ] Summarize within categories (FR-011): T035, T036, T037
-11. [ ] Set a budget limit (FR-012): T038, T039, T040, T041
-12. [ ] Update the local database (FR-002, umbrella write requirement): T042, T043, T044, T045
+2. [ ] Enter income (FR-002): T013, T014, T015
+3. [ ] Categorize expenses (FR-003): T016, T017
+4. [ ] Edit/delete categories (FR-004): T018, T019, T020
+5. [ ] Add expenses (FR-005): T021, T022, T023, T024
+6. [ ] Update expenses (FR-006): T025, T026
+7. [ ] Delete expenses (FR-007): T027, T028
+8. [ ] Perform arithmetic operations (FR-008): T029, T030, T031
+9. [ ] Present remaining budget in real time (FR-009): T032, T033, T034
+10. [ ] Summarize within categories (FR-010): T035, T036, T037
+11. [ ] Set a budget limit (FR-011): T038, T039, T040, T041
 
 ## Foundation (Shared Infrastructure)
 
@@ -56,102 +55,102 @@ Layer intent:
 
 ---
 
-## FR-002 - Update the local database
-
-**Purpose**: Deliver cross-layer write operations for income, expenses, and categories.
-
-- [ ] Step 1 (T042) Implement application logic for add/update/delete expenses and categories
-- [ ] Step 2 (T043) Extend Category model and endpoints to support category_limit (see data-model.md, contracts/api.md)
-- [ ] Step 3 (T044) Implement write income flows (POST/PUT/DELETE endpoints and application logic)
-- [ ] Step 4 (T045) Run cross-layer integration test for FR-002 write flow
-
----
-
-## FR-003 - Enter income
+## FR-002 - Enter income
 
 **Purpose**: Support reading, writing, and validating income flows.
 
 - [ ] Step 1 (T013) Implement write income endpoints and application flow
 - [ ] Step 2 (T014) Implement frontend UI for income and category management
-- [ ] Step 3 (T015) Run integration test for FR-003 income flow
+- [ ] Step 3 (T015) Run integration test for FR-002 income flow
 
 ---
 
-## FR-004 - Categorize expenses
+## FR-003 - Categorize expenses
 
 **Purpose**: Support category-based assignment and use in expense flows.
 
 - [ ] Step 1 (T016) Implement category assignment flow in expense application logic
-- [ ] Step 2 (T017) Run integration test for FR-004 category assignment flow
+- [ ] Step 2 (T017) Run integration test for FR-003 category assignment flow
 
 ---
 
-## FR-005 - Edit/delete categories
+## FR-004 - Edit/delete categories
 
 **Purpose**: Support category maintenance and category update/delete behavior.
 
 - [ ] Step 1 (T018) Implement category update and delete operations in backend
 - [ ] Step 2 (T019) Expose category update/delete endpoints
-- [ ] Step 3 (T020) Run integration test for FR-005 category edit/delete flow
+- [ ] Step 3 (T020) Run integration test for FR-004 category edit/delete flow
 
 ---
 
-## FR-006 - Add expenses
+## FR-005 - Add expenses
 
 **Purpose**: Support creating expenses in backend logic and UI.
 
 - [ ] Step 1 (T021) Implement expense create operation in backend (application/repository)
 - [ ] Step 2 (T022) Expose create Expense endpoint (POST /expenses)
 - [ ] Step 3 (T023) Implement frontend UI for entering expenses
-- [ ] Step 4 (T024) Run integration test for FR-006 expense create flow
+- [ ] Step 4 (T024) Run integration test for FR-005 expense create flow
 
 ---
 
-## FR-007 - Update expenses
+## FR-006 - Update expenses
 
 **Purpose**: Support editing existing expense records.
 
 - [ ] Step 1 (T025) Implement expense update operation in backend
-- [ ] Step 2 (T026) Run integration test for FR-007 expense update flow
+- [ ] Step 2 (T026) Run integration test for FR-006 expense update flow
 
 ---
 
-## FR-008 - Delete expenses
+## FR-007 - Delete expenses
 
 **Purpose**: Support deleting existing expense records.
 
 - [ ] Step 1 (T027) Implement expense delete operation in backend
-- [ ] Step 2 (T028) Run integration test for FR-008 expense delete flow
+- [ ] Step 2 (T028) Run integration test for FR-007 expense delete flow
 
 ---
 
-## FR-009 - Perform arithmetic operations
+## FR-008 - Perform arithmetic operations
 
 **Purpose**: Implement calculation logic used for budget and summaries.
 
 - [ ] Step 1 (T029) Implement category summary calculations
 - [ ] Step 2 (T030) Implement budget arithmetic logic in application layer
-- [ ] Step 3 (T031) Run integration test for FR-009 arithmetic flow
+- [ ] Step 3 (T031) Run integration test for FR-008 arithmetic flow
 
 ---
 
-## FR-010 - Present remaining budget in real time
+## FR-009 - Present remaining budget in real time
 
 **Purpose**: Show continuously updated budget status as data changes.
 
 - [ ] Step 1 (T032) Connect budget calculation updates to data changes
 - [ ] Step 2 (T033) Implement real-time budget updates in frontend
-- [ ] Step 3 (T034) Run integration test for FR-010 real-time budget flow
+- [ ] Step 3 (T034) Run integration test for FR-009 real-time budget flow
 
 ---
 
-## FR-011 - Summarize within categories
+## FR-010 - Summarize within categories
 
 **Purpose**: Provide grouped category-level totals and summaries.
 
 - [ ] Step 1 (T035) Implement category summary endpoint/service output
 - [ ] Step 2 (T036) Implement category summary presentation in frontend
-- [ ] Step 3 (T037) Run integration test for FR-011 summary flow
+- [ ] Step 3 (T037) Run integration test for FR-010 summary flow
+
+---
+
+## FR-011 - Set a budget limit
+
+**Purpose**: Let users define limits and apply them in calculations and warnings.
+
+- [ ] Step 1 (T038) Implement category limit update flow
+- [ ] Step 2 (T039) Apply limit logic in budget calculations and warnings
+- [ ] Step 3 (T040) Implement frontend controls for category limits
+- [ ] Step 4 (T041) Run integration test for FR-011 budget-limit flow
 
 ---
 
