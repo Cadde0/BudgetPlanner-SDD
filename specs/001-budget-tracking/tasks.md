@@ -61,7 +61,7 @@ Layer intent:
 
 - [x] Step 1 (T013) Implement write income endpoints and application flow
 - [x] Step 2 (T014) Implement frontend UI for income and category management
-- [ ] Step 3 (T015) Run integration test for FR-002 income flow
+- [x] Step 3 (T015) Run integration test for FR-002 income flow
 
 ---
 
