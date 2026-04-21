@@ -60,7 +60,7 @@ Layer intent:
 **Purpose**: Support reading, writing, and validating income flows.
 
 - [x] Step 1 (T013) Implement write income endpoints and application flow
-- [ ] Step 2 (T014) Implement frontend UI for income and category management
+- [x] Step 2 (T014) Implement frontend UI for income and category management
 - [ ] Step 3 (T015) Run integration test for FR-002 income flow
 
 ---
