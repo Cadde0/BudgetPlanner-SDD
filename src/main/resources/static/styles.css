@@ -267,6 +267,18 @@ h2 {
     flex-wrap: wrap;
 }
 
+.category-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.category-form .category-description-field {
+    grid-column: span 2;
+}
+
+.category-form .form-actions {
+    grid-column: span 2;
+}
+
 .table-wrap {
     overflow-x: auto;
     border-radius: 20px;

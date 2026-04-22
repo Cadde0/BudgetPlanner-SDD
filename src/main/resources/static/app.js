@@ -4,6 +4,7 @@ const state = {
   summaries: [],
   expenses: [],
   editingIncomeId: null,
+  editingCategoryId: null,
 };
 
 const elements = {
@@ -17,7 +18,14 @@ const elements = {
   incomeCancelButton: document.getElementById("incomeCancelButton"),
   refreshIncomeButton: document.getElementById("refreshIncomeButton"),
   refreshCategoryButton: document.getElementById("refreshCategoryButton"),
-  categorySummaryList: document.getElementById("categorySummaryList"),
+  categoryForm: document.getElementById("categoryForm"),
+  categoryId: document.getElementById("categoryId"),
+  categoryName: document.getElementById("categoryName"),
+  categoryLimit: document.getElementById("categoryLimit"),
+  categoryDescription: document.getElementById("categoryDescription"),
+  categorySubmitButton: document.getElementById("categorySubmitButton"),
+  categoryCancelButton: document.getElementById("categoryCancelButton"),
+  categoryTableBody: document.getElementById("categoryTableBody"),
   snapshotGrid: document.getElementById("snapshotGrid"),
   // Expense category assignment UI
   expenseTableBody: document.getElementById("expenseTableBody"),
@@ -197,43 +205,141 @@ function renderIncomeTable() {
 
 function renderCategories() {
   if (!state.categories.length) {
-    elements.categorySummaryList.innerHTML =
-      '<div class="empty-state">No categories are available yet.</div>';
+    elements.categoryTableBody.innerHTML =
+      '<tr><td colspan="4" class="empty-state">No categories are available yet.</td></tr>';
     return;
   }
 
-  const summaryByCategoryId = new Map(
-    state.summaries.map((summary) => [summary.categoryId, summary]),
-  );
-
-  elements.categorySummaryList.innerHTML = state.categories
+  elements.categoryTableBody.innerHTML = state.categories
     .map((category) => {
-      const summary = summaryByCategoryId.get(category.id);
-      const spent = summary ? Number(summary.totalExpense || 0) : 0;
       const limit =
         category.categoryLimit == null ? null : Number(category.categoryLimit);
-      const remaining = limit == null ? null : limit - spent;
 
       return `
-            <article class="category-card">
-                <h3>${category.name}</h3>
-                <div class="category-meta">${category.description || "No description provided."}</div>
-                <div class="category-figure">
-                    <span>Spent</span>
-                    <strong>${formatAmount(spent)}</strong>
+        <tr>
+            <td>${category.name}</td>
+            <td>${limit == null ? "Not set" : formatAmount(limit)}</td>
+            <td>${category.description || "No description"}</td>
+            <td>
+                <div class="row-actions">
+                    <button class="row-action" type="button" data-action="edit-category" data-id="${category.id}">Edit</button>
+                    <button class="row-action" type="button" data-action="delete-category" data-id="${category.id}" data-tone="danger">Delete</button>
                 </div>
-                <div class="category-figure">
-                    <span>Limit</span>
-                    <strong>${limit == null ? "Not set" : formatAmount(limit)}</strong>
-                </div>
-                <div class="category-figure">
-                    <span>Remaining</span>
-                    <strong>${remaining == null ? "Not set" : formatAmount(remaining)}</strong>
-                </div>
-            </article>
+            </td>
+        </tr>
         `;
     })
     .join("");
+}
+
+function resetCategoryForm() {
+  state.editingCategoryId = null;
+  elements.categoryId.value = "";
+  elements.categoryName.value = "";
+  elements.categoryLimit.value = "";
+  elements.categoryDescription.value = "";
+  elements.categorySubmitButton.textContent = "Save category";
+  elements.categoryCancelButton.hidden = true;
+}
+
+function beginCategoryEdit(categoryId) {
+  const category = state.categories.find((entry) => entry.id === categoryId);
+  if (!category) {
+    setStatus("The category no longer exists.", "error");
+    return;
+  }
+
+  state.editingCategoryId = categoryId;
+  elements.categoryId.value = String(categoryId);
+  elements.categoryName.value = category.name || "";
+  elements.categoryLimit.value =
+    category.categoryLimit == null ? "" : String(category.categoryLimit);
+  elements.categoryDescription.value = category.description || "";
+  elements.categorySubmitButton.textContent = "Update category";
+  elements.categoryCancelButton.hidden = false;
+  elements.categoryName.focus();
+}
+
+async function handleCategorySubmit(event) {
+  event.preventDefault();
+
+  const name = elements.categoryName.value.trim();
+  const description = elements.categoryDescription.value.trim();
+  const limitRaw = elements.categoryLimit.value.trim();
+  const categoryLimit =
+    limitRaw.length === 0 ? null : Number.parseInt(limitRaw, 10);
+
+  if (!name) {
+    setStatus("Category name is required.", "error");
+    return;
+  }
+
+  if (
+    categoryLimit !== null &&
+    (!Number.isInteger(categoryLimit) || categoryLimit < 0)
+  ) {
+    setStatus("Category limit must be a non-negative whole number.", "error");
+    return;
+  }
+
+  const payload = {
+    name,
+    categoryLimit,
+    description,
+  };
+
+  try {
+    if (state.editingCategoryId == null) {
+      await requestJson("/categories", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+      setStatus("Category added successfully.", "success");
+    } else {
+      await requestJson(`/categories/${state.editingCategoryId}`, {
+        method: "PUT",
+        body: JSON.stringify(payload),
+      });
+      setStatus("Category updated successfully.", "success");
+    }
+
+    resetCategoryForm();
+    await refreshDashboard();
+  } catch (error) {
+    setStatus(error.message, "error");
+  }
+}
+
+async function handleCategoryTableClick(event) {
+  const button = event.target.closest("button[data-action]");
+  if (!button) {
+    return;
+  }
+
+  const categoryId = Number(button.dataset.id);
+  const action = button.dataset.action;
+
+  try {
+    if (action === "edit-category") {
+      beginCategoryEdit(categoryId);
+      return;
+    }
+
+    if (action === "delete-category") {
+      const confirmed = globalThis.confirm(`Delete category #${categoryId}?`);
+      if (!confirmed) {
+        return;
+      }
+
+      await requestJson(`/categories/${categoryId}`, { method: "DELETE" });
+      if (state.editingCategoryId === categoryId) {
+        resetCategoryForm();
+      }
+      await refreshDashboard("Category deleted successfully.");
+    }
+  } catch (error) {
+    setStatus(error.message, "error");
+  }
 }
 
 function renderSnapshot() {
@@ -374,6 +480,15 @@ async function start() {
   elements.refreshCategoryButton.addEventListener("click", () =>
     refreshDashboard("Category data refreshed."),
   );
+  elements.categoryForm.addEventListener("submit", handleCategorySubmit);
+  elements.categoryTableBody.addEventListener(
+    "click",
+    handleCategoryTableClick,
+  );
+  elements.categoryCancelButton.addEventListener("click", () => {
+    resetCategoryForm();
+    setStatus("Category edit cancelled.", "success");
+  });
   elements.incomeCancelButton.addEventListener("click", () => {
     resetIncomeForm();
     setStatus("Income edit cancelled.", "success");

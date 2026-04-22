@@ -53,16 +53,49 @@ public class CategoryRepository {
             return ps;
         }, keyHolder);
 
-        Number generatedId;
-        Map<String, Object> generatedKeys = keyHolder.getKeys();
-        if (generatedKeys != null && generatedKeys.get("id") instanceof Number idValue) {
-            generatedId = idValue;
-        } else {
-            generatedId = keyHolder.getKey();
-        }
+        Number generatedId = resolveGeneratedId(keyHolder);
 
         int id = generatedId == null ? 0 : generatedId.intValue();
         return new Category(id, category.getName(), category.getCategoryLimit(), category.getDescription());
+    }
+
+    private Number resolveGeneratedId(KeyHolder keyHolder) {
+        Map<String, Object> generatedKeys = keyHolder.getKeys();
+        if (generatedKeys == null || generatedKeys.isEmpty()) {
+            return keyHolder.getKey();
+        }
+
+        Number idFromIdKey = findNumberByKeyIgnoreCase(generatedKeys, "id");
+        if (idFromIdKey != null) {
+            return idFromIdKey;
+        }
+
+        Number firstNumber = findFirstNumberValue(generatedKeys);
+        if (firstNumber != null) {
+            return firstNumber;
+        }
+
+        return keyHolder.getKey();
+    }
+
+    private Number findNumberByKeyIgnoreCase(Map<String, Object> values, String keyName) {
+        for (Map.Entry<String, Object> entry : values.entrySet()) {
+            if (keyName.equalsIgnoreCase(entry.getKey()) && entry.getValue() instanceof Number numberValue) {
+                return numberValue;
+            }
+        }
+
+        return null;
+    }
+
+    private Number findFirstNumberValue(Map<String, Object> values) {
+        for (Object value : values.values()) {
+            if (value instanceof Number numberValue) {
+                return numberValue;
+            }
+        }
+
+        return null;
     }
 
     public Optional<Category> update(int id, Category category) {
