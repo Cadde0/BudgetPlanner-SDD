@@ -80,6 +80,58 @@
           </div>
         </article>
 
+        <article class="panel panel-wide">
+          <div class="panel-header">
+            <div>
+              <p class="panel-kicker">Expense management</p>
+              <h2>Add, edit, and categorize expenses.</h2>
+            </div>
+            <button class="ghost-button" type="button" id="refreshExpenseButton">
+              Refresh
+            </button>
+          </div>
+
+          <form class="entry-form" id="expenseForm">
+            <input type="hidden" id="expenseId" />
+            <label>
+              Amount
+              <input type="number" id="expenseAmount" min="1" step="1" placeholder="500" required />
+            </label>
+            <label>
+              Category
+              <select id="expenseCategoryId" required>
+                <option value="">Select category</option>
+              </select>
+            </label>
+            <label>
+              Description
+              <input type="text" id="expenseDescription" maxlength="255" placeholder="e.g. Groceries" />
+            </label>
+            <div class="form-actions">
+              <button type="submit" class="primary-button" id="expenseSubmitButton">Save expense</button>
+              <button type="button" class="secondary-button" id="expenseCancelButton" hidden>Cancel edit</button>
+            </div>
+          </form>
+
+          <div class="table-wrap">
+            <table class="data-table" aria-label="Expense entries">
+              <thead>
+                <tr>
+                  <th>Amount</th>
+                  <th>Category</th>
+                  <th>Description</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="expenseTableBody">
+                <tr>
+                  <td colspan="4" class="empty-state">Loading expenses...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
         <aside class="panel">
           <div class="panel-header">
             <div>
