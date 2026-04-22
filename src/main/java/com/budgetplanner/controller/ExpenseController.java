@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,27 +34,17 @@ public class ExpenseController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // --- FR-003: Categorize expenses ---
-    // Create a new expense with category assignment
-    @org.springframework.web.bind.annotation.PostMapping
-    public ResponseEntity<Expense> createExpense(@org.springframework.web.bind.annotation.RequestBody Expense expense) {
-        try {
-            Expense created = expenseService.createExpense(expense);
-            return ResponseEntity.ok(created);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
+    @PutMapping("/{id}/category")
+    public ResponseEntity<Expense> assignCategory(@PathVariable int id, @RequestBody CategoryAssignmentRequest request) {
+        if (request == null || request.categoryId() == null) {
+            throw new IllegalArgumentException("Category ID must be a positive integer.");
         }
+
+        return expenseService.assignCategory(id, request.categoryId())
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Update an existing expense's category (and other fields)
-    @org.springframework.web.bind.annotation.PutMapping("/{id}")
-    public ResponseEntity<Expense> updateExpense(@PathVariable int id, @org.springframework.web.bind.annotation.RequestBody Expense expense) {
-        try {
-            return expenseService.updateExpense(id, expense)
-                    .map(ResponseEntity::ok)
-                    .orElseGet(() -> ResponseEntity.notFound().build());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public record CategoryAssignmentRequest(Integer categoryId) {
     }
 }

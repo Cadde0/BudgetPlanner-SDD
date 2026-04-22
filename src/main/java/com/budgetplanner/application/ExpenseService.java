@@ -24,19 +24,10 @@ public class ExpenseService {
         return expenseRepository.findById(id);
     }
 
-    public Expense createExpense(Expense expense) {
-        validationService.validateExpenseAmount(expense.getAmount());
-        validationService.validateCategoryId(expense.getCategoryId());
-        return expenseRepository.save(expense);
+
+    public Optional<Expense> assignCategory(int id, int categoryId) {
+        validationService.validateCategoryId(categoryId);
+        return expenseRepository.updateCategory(id, categoryId);
     }
 
-    public Optional<Expense> updateExpense(int id, Expense expense) {
-        validationService.validateExpenseAmount(expense.getAmount());
-        validationService.validateCategoryId(expense.getCategoryId());
-        return expenseRepository.update(id, expense);
-    }
-
-    public boolean deleteExpense(int id) {
-        return expenseRepository.deleteById(id);
-    }
 }

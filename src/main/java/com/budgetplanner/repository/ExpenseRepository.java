@@ -36,26 +36,11 @@ public class ExpenseRepository {
         return results.stream().findFirst();
     }
 
-    public Expense save(Expense expense) {
-        jdbcTemplate.update(
-                "INSERT INTO expenses (amount, category_id, description) VALUES (?, ?, ?)",
-                expense.getAmount(),
-                expense.getCategoryId(),
-                expense.getDescription()
-        );
-        // Retrieve the last inserted expense (assuming id is auto-increment)
-        return jdbcTemplate.query(
-                "SELECT id, amount, category_id, description FROM expenses ORDER BY id DESC LIMIT 1",
-                EXPENSE_ROW_MAPPER
-        ).get(0);
-    }
 
-    public Optional<Expense> update(int id, Expense expense) {
+    public Optional<Expense> updateCategory(int id, int categoryId) {
         int updated = jdbcTemplate.update(
-                "UPDATE expenses SET amount = ?, category_id = ?, description = ? WHERE id = ?",
-                expense.getAmount(),
-                expense.getCategoryId(),
-                expense.getDescription(),
+                "UPDATE expenses SET category_id = ? WHERE id = ?",
+                categoryId,
                 id
         );
         if (updated > 0) {
@@ -65,12 +50,5 @@ public class ExpenseRepository {
         }
     }
 
-    public boolean deleteById(int id) {
-        int deleted = jdbcTemplate.update(
-                "DELETE FROM expenses WHERE id = ?",
-                id
-        );
-        return deleted > 0;
-    }
 }
   
