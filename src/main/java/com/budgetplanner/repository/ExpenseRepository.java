@@ -35,5 +35,42 @@ public class ExpenseRepository {
                 id);
         return results.stream().findFirst();
     }
+
+    public Expense save(Expense expense) {
+        jdbcTemplate.update(
+                "INSERT INTO expenses (amount, category_id, description) VALUES (?, ?, ?)",
+                expense.getAmount(),
+                expense.getCategoryId(),
+                expense.getDescription()
+        );
+        // Retrieve the last inserted expense (assuming id is auto-increment)
+        return jdbcTemplate.query(
+                "SELECT id, amount, category_id, description FROM expenses ORDER BY id DESC LIMIT 1",
+                EXPENSE_ROW_MAPPER
+        ).get(0);
+    }
+
+    public Optional<Expense> update(int id, Expense expense) {
+        int updated = jdbcTemplate.update(
+                "UPDATE expenses SET amount = ?, category_id = ?, description = ? WHERE id = ?",
+                expense.getAmount(),
+                expense.getCategoryId(),
+                expense.getDescription(),
+                id
+        );
+        if (updated > 0) {
+            return findById(id);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public boolean deleteById(int id) {
+        int deleted = jdbcTemplate.update(
+                "DELETE FROM expenses WHERE id = ?",
+                id
+        );
+        return deleted > 0;
+    }
 }
   

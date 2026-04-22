@@ -20,13 +20,19 @@ public class ValidationService {
         validatePositiveAmount(amount, "Expense amount");
     }
 
+
     public void validateCategoryLimit(Integer categoryLimit) {
         if (categoryLimit == null) {
             return;
         }
-
         if (categoryLimit < 0) {
             failValidation("Category limit cannot be negative.");
+        }
+    }
+
+    public void validateCategoryId(Integer categoryId) {
+        if (categoryId == null || categoryId <= 0) {
+            failValidation("Category ID must be a positive integer.");
         }
     }
 
