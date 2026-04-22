@@ -19,15 +19,15 @@ Layer intent:
 
 1. [x] Access the local database (FR-001): T004, T005, T006, T007, T008, T009, T010, T011, T012
 2. [x] Enter income (FR-002): T013, T014, T015
-3. [ ] Categorize expenses (FR-003): T016, T017
-4. [ ] Edit/delete categories (FR-004): T018, T019, T020
-5. [ ] Add expenses (FR-005): T021, T022, T023, T024
-6. [ ] Update expenses (FR-006): T025, T026
-7. [ ] Delete expenses (FR-007): T027, T028
-8. [ ] Perform arithmetic operations (FR-008): T029, T030, T031
-9. [ ] Present remaining budget in real time (FR-009): T032, T033, T034
-10. [ ] Summarize within categories (FR-010): T035, T036, T037
-11. [ ] Set a budget limit (FR-011): T038, T039, T040, T041
+3. [ ] Categorize expenses (FR-003): T016, T017, T018
+4. [ ] Edit/delete categories (FR-004): T019, T020, T021, T022
+5. [ ] Add expenses (FR-005): T023, T024, T025, T026
+6. [ ] Update expenses (FR-006): T027, T028
+7. [ ] Delete expenses (FR-007): T029, T030
+8. [ ] Perform arithmetic operations (FR-008): T031, T032, T033
+9. [ ] Present remaining budget in real time (FR-009): T034, T035, T036
+10. [ ] Summarize within categories (FR-010): T037, T038, T039
+11. [ ] Set a budget limit (FR-011): T040, T041, T042, T043
 
 ## Foundation (Shared Infrastructure)
 
@@ -69,9 +69,9 @@ Layer intent:
 
 **Purpose**: Support category-based assignment and use in expense flows.
 
-- [ ] Step 1 (T016) Implement category assignment flow in expense application logic
-- [ ] Step 2 (T017) Run integration test for FR-003 category assignment flow
-- [ ] Step 3 (T051) [P] Implement frontend UI for categorizing expenses
+- [x] Step 1 (T016) Implement category assignment flow in expense application logic
+- [x] Step 2 (T017) Run integration test for FR-003 category assignment flow
+- [x] Step 3 (T018) [P] Implement frontend UI for categorizing expenses
 
 ---
 
@@ -79,10 +79,10 @@ Layer intent:
 
 **Purpose**: Support category maintenance and category update/delete behavior.
 
-- [ ] Step 1 (T018) Implement category update and delete operations in backend
-- [ ] Step 2 (T019) Expose category update/delete endpoints
-- [ ] Step 3 (T052) [P] Implement frontend UI for editing/deleting categories
-- [ ] Step 4 (T020) Run integration test for FR-004 category edit/delete flow
+- [ ] Step 1 (T019) Implement category add, update, and delete operations in backend
+- [ ] Step 2 (T020) Expose category create/update/delete endpoints
+- [ ] Step 3 (T021) [P] Implement frontend UI for editing/deleting categories
+- [ ] Step 4 (T022) Run integration test for FR-004 category edit/delete flow
 
 ---
 
@@ -90,10 +90,10 @@ Layer intent:
 
 **Purpose**: Support creating expenses in backend logic and UI.
 
-- [ ] Step 1 (T021) Implement expense create operation in backend (application/repository)
-- [ ] Step 2 (T022) Expose create Expense endpoint (POST /expenses)
-- [ ] Step 3 (T023) Implement frontend UI for entering expenses
-- [ ] Step 4 (T024) Run integration test for FR-005 expense create flow
+- [ ] Step 1 (T023) Implement expense create operation in backend (application/repository)
+- [ ] Step 2 (T024) Expose create Expense endpoint (POST /expenses)
+- [ ] Step 3 (T025) Implement frontend UI for entering expenses
+- [ ] Step 4 (T026) Run integration test for FR-005 expense create flow
 
 ---
 
@@ -101,8 +101,8 @@ Layer intent:
 
 **Purpose**: Support editing existing expense records.
 
-- [ ] Step 1 (T025) Implement expense update operation in backend
-- [ ] Step 2 (T026) Run integration test for FR-006 expense update flow
+- [ ] Step 1 (T027) Implement expense update operation in backend
+- [ ] Step 2 (T028) Run integration test for FR-006 expense update flow
 
 ---
 
@@ -110,8 +110,8 @@ Layer intent:
 
 **Purpose**: Support deleting existing expense records.
 
-- [ ] Step 1 (T027) Implement expense delete operation in backend
-- [ ] Step 2 (T028) Run integration test for FR-007 expense delete flow
+- [ ] Step 1 (T029) Implement expense delete operation in backend
+- [ ] Step 2 (T030) Run integration test for FR-007 expense delete flow
 
 ---
 
@@ -119,9 +119,9 @@ Layer intent:
 
 **Purpose**: Implement calculation logic used for budget and summaries.
 
-- [ ] Step 1 (T029) Implement category summary calculations
-- [ ] Step 2 (T030) Implement budget arithmetic logic in application layer
-- [ ] Step 3 (T031) Run integration test for FR-008 arithmetic flow
+- [ ] Step 1 (T031) Implement category summary calculations
+- [ ] Step 2 (T032) Implement budget arithmetic logic in application layer
+- [ ] Step 3 (T033) Run integration test for FR-008 arithmetic flow
 
 ---
 
@@ -129,9 +129,9 @@ Layer intent:
 
 **Purpose**: Show continuously updated budget status as data changes.
 
-- [ ] Step 1 (T032) Connect budget calculation updates to data changes
-- [ ] Step 2 (T033) Implement real-time budget updates in frontend
-- [ ] Step 3 (T034) Run integration test for FR-009 real-time budget flow
+- [ ] Step 1 (T034) Connect budget calculation updates to data changes
+- [ ] Step 2 (T035) Implement real-time budget updates in frontend
+- [ ] Step 3 (T036) Run integration test for FR-009 real-time budget flow
 
 ---
 
@@ -139,9 +139,9 @@ Layer intent:
 
 **Purpose**: Provide grouped category-level totals and summaries.
 
-- [ ] Step 1 (T035) Implement category summary endpoint/service output
-- [ ] Step 2 (T036) Implement category summary presentation in frontend
-- [ ] Step 3 (T037) Run integration test for FR-010 summary flow
+- [ ] Step 1 (T037) Implement category summary endpoint/service output
+- [ ] Step 2 (T038) Implement category summary presentation in frontend
+- [ ] Step 3 (T039) Run integration test for FR-010 summary flow
 
 ---
 
@@ -149,46 +149,35 @@ Layer intent:
 
 **Purpose**: Let users define limits and apply them in calculations and warnings.
 
-- [ ] Step 1 (T038) Implement category limit update flow
-- [ ] Step 2 (T039) Apply limit logic in budget calculations and warnings
-- [ ] Step 3 (T040) Implement frontend controls for category limits
-- [ ] Step 4 (T041) Run integration test for FR-011 budget-limit flow
-
----
-
-## FR-012 - Set a budget limit
-
-**Purpose**: Let users define limits and apply them in calculations and warnings.
-
-- [ ] Step 1 (T038) Implement category limit update flow
-- [ ] Step 2 (T039) Apply limit logic in budget calculations and warnings
-- [ ] Step 3 (T040) Implement frontend controls for category limits
-- [ ] Step 4 (T041) Run integration test for FR-012 budget-limit flow
+- [ ] Step 1 (T040) Implement category limit update flow
+- [ ] Step 2 (T041) Apply limit logic in budget calculations and warnings
+- [ ] Step 3 (T042) Implement frontend controls for category limits
+- [ ] Step 4 (T043) Run integration test for FR-011 budget-limit flow
 
 ---
 
 ## Final Phase: Polish & Cross-Cutting Concerns
 
-- [ ] T046 [P] Add/verify Javadocs for all public classes and methods
-- [ ] T047 [P] Review and improve error messages and validation feedback
-- [ ] T048 [P] Manual usability test: verify system is easy to use without instructions
-- [ ] T049 [P] Performance test: verify system loads all data within 2 seconds and handles 50 transactions
-- [ ] T050 [P] Final code review: verify every task branch was merged only after that task passed tests
+- [ ] T044 [P] Add/verify Javadocs for all public classes and methods
+- [ ] T045 [P] Review and improve error messages and validation feedback
+- [ ] T046 [P] Manual usability test: verify system is easy to use without instructions
+- [ ] T047 [P] Performance test: verify system loads all data within 2 seconds and handles 50 transactions
+- [ ] T048 [P] Final code review: verify every task branch was merged only after that task passed tests
 
 ## Dependencies
 
 - Foundation tasks (T001-T003) should be completed before FR tasks
 - FR-001 tasks (T004-T011) should be completed before FR-002 write tasks (T012-T014)
 - FR-003 to FR-008 depend on FR-001 read access
-- FR-009 to FR-012 depend on completed data mutation and summary logic
-- Polish tasks (T046-T050) can run after FR tasks are complete
+- FR-009 to FR-011 depend on completed data mutation and summary logic
+- Polish tasks (T044-T048) can run after FR tasks are complete
 
 ## Parallel Execution Examples
 
 - T005, T006, T007 can be done in parallel after T004
 - T009, T010, T011 can be done in parallel after shared read infrastructure is complete
-- T026 and T016 can be developed in parallel once write flow design is finalized
-- T034 and T037 can be split across backend/frontend in parallel
+- T028 and T016 can be developed in parallel once write flow design is finalized
+- T036 and T039 can be split across backend/frontend in parallel
 
 ## Implementation Strategy
 
