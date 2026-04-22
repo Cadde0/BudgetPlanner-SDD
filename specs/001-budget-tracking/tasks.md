@@ -79,7 +79,7 @@ Layer intent:
 
 **Purpose**: Support category maintenance and category update/delete behavior.
 
-- [ ] Step 1 (T019) Implement category add, update, and delete operations in backend
+- [x] Step 1 (T019) Implement category add, update, and delete operations in backend
 - [ ] Step 2 (T020) Expose category create/update/delete endpoints
 - [ ] Step 3 (T021) [P] Implement frontend UI for editing/deleting categories
 - [ ] Step 4 (T022) Run integration test for FR-004 category edit/delete flow
