@@ -1,7 +1,7 @@
 package com.budgetplanner.controller;
 
 import com.budgetplanner.model.Expense;
-import com.budgetplanner.repository.ExpenseRepository;
+import com.budgetplanner.application.ExpenseService;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,14 +17,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class ExpenseControllerTest {
 
-    private ExpenseRepository expenseRepository;
+    private ExpenseService expenseService;
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        expenseRepository = mock(ExpenseRepository.class);
+        expenseService = mock(ExpenseService.class);
 
-        ExpenseController controller = new ExpenseController(expenseRepository);
+        ExpenseController controller = new ExpenseController(expenseService);
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
@@ -32,7 +32,7 @@ class ExpenseControllerTest {
 
     @Test
     void getAllExpensesReturnsOk() throws Exception {
-        when(expenseRepository.findAll()).thenReturn(List.of(new Expense(1, 500, 2, "Groceries")));
+        when(expenseService.getAllExpenses()).thenReturn(List.of(new Expense(1, 500, 2, "Groceries")));
 
         mockMvc.perform(get("/expenses"))
                 .andExpect(status().isOk())
@@ -42,7 +42,7 @@ class ExpenseControllerTest {
 
     @Test
     void getExpenseByIdReturnsNotFoundWhenMissing() throws Exception {
-        when(expenseRepository.findById(99)).thenReturn(Optional.empty());
+        when(expenseService.getExpenseById(99)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/expenses/99"))
                 .andExpect(status().isNotFound());
