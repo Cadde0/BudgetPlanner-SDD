@@ -4,7 +4,6 @@ const state = {
   summaries: [],
   expenses: [],
   editingIncomeId: null,
-  editingExpenseId: null,
 };
 
 const elements = {
@@ -20,75 +19,50 @@ const elements = {
   refreshCategoryButton: document.getElementById("refreshCategoryButton"),
   categorySummaryList: document.getElementById("categorySummaryList"),
   snapshotGrid: document.getElementById("snapshotGrid"),
-  // Expense UI
+  // Expense category assignment UI
   expenseTableBody: document.getElementById("expenseTableBody"),
-  expenseForm: document.getElementById("expenseForm"),
-  expenseId: document.getElementById("expenseId"),
-  expenseAmount: document.getElementById("expenseAmount"),
-  expenseCategoryId: document.getElementById("expenseCategoryId"),
-  expenseDescription: document.getElementById("expenseDescription"),
-  expenseSubmitButton: document.getElementById("expenseSubmitButton"),
-  expenseCancelButton: document.getElementById("expenseCancelButton"),
   refreshExpenseButton: document.getElementById("refreshExpenseButton"),
 };
-function renderExpenseCategoryOptions() {
-  elements.expenseCategoryId.innerHTML =
-    '<option value="">Select category</option>' +
-    state.categories
-      .map((cat) => `<option value="${cat.id}">${cat.name}</option>`)
-      .join("");
-}
 
 function renderExpenseTable() {
   if (!state.expenses.length) {
     elements.expenseTableBody.innerHTML =
-      '<tr><td colspan="4" class="empty-state">No expenses have been saved yet.</td></tr>';
+      '<tr><td colspan="4" class="empty-state">No expenses were found.</td></tr>';
     return;
   }
-  const categoryMap = new Map(state.categories.map((c) => [c.id, c.name]));
+
+  const categoryOptions = state.categories
+    .map((cat) => `<option value="${cat.id}">${cat.name}</option>`)
+    .join("");
+
   elements.expenseTableBody.innerHTML = state.expenses
     .map(
       (expense) => `
         <tr>
-            <td>${formatAmount(expense.amount)}</td>
-            <td>${categoryMap.get(expense.categoryId) || "Unknown"}</td>
             <td>${expense.description || ""}</td>
+            <td>${formatAmount(expense.amount)}</td>
             <td>
-                <div class="row-actions">
-                    <button class="row-action" type="button" data-action="edit-expense" data-id="${expense.id}">Edit</button>
-                    <button class="row-action" type="button" data-action="delete-expense" data-id="${expense.id}" data-tone="danger">Delete</button>
-                </div>
+              <select class="row-category-select" data-id="${expense.id}">
+                <option value="">Select category</option>
+                ${categoryOptions}
+              </select>
+            </td>
+            <td>
+              <button class="row-action" type="button" data-action="assign-category" data-id="${expense.id}">Assign</button>
             </td>
         </tr>
     `,
     )
     .join("");
-}
 
-function resetExpenseForm() {
-  state.editingExpenseId = null;
-  elements.expenseId.value = "";
-  elements.expenseAmount.value = "";
-  elements.expenseCategoryId.value = "";
-  elements.expenseDescription.value = "";
-  elements.expenseSubmitButton.textContent = "Save expense";
-  elements.expenseCancelButton.hidden = true;
-}
-
-function beginExpenseEdit(expenseId) {
-  const expense = state.expenses.find((entry) => entry.id === expenseId);
-  if (!expense) {
-    setStatus("The expense entry no longer exists.", "error");
-    return;
-  }
-  state.editingExpenseId = expenseId;
-  elements.expenseId.value = String(expenseId);
-  elements.expenseAmount.value = String(expense.amount ?? "");
-  elements.expenseCategoryId.value = String(expense.categoryId ?? "");
-  elements.expenseDescription.value = expense.description || "";
-  elements.expenseSubmitButton.textContent = "Update expense";
-  elements.expenseCancelButton.hidden = false;
-  elements.expenseAmount.focus();
+  state.expenses.forEach((expense) => {
+    const select = elements.expenseTableBody.querySelector(
+      `select[data-id="${expense.id}"]`,
+    );
+    if (select && expense.categoryId != null) {
+      select.value = String(expense.categoryId);
+    }
+  });
 }
 
 async function loadExpenses() {
@@ -96,66 +70,34 @@ async function loadExpenses() {
   renderExpenseTable();
 }
 
-async function handleExpenseSubmit(event) {
-  event.preventDefault();
-  const amount = Number.parseInt(elements.expenseAmount.value, 10);
-  const categoryId = Number.parseInt(elements.expenseCategoryId.value, 10);
-  const description = elements.expenseDescription.value.trim();
-  if (!Number.isInteger(amount) || amount <= 0) {
-    setStatus("Expense must be a positive whole number.", "error");
-    return;
-  }
-  if (!Number.isInteger(categoryId) || categoryId <= 0) {
-    setStatus("Please select a valid category.", "error");
-    return;
-  }
-  const payload = { amount, categoryId, description };
-  try {
-    if (state.editingExpenseId == null) {
-      await requestJson("/expenses", {
-        method: "POST",
-        body: JSON.stringify(payload),
-      });
-      setStatus("Expense added successfully.", "success");
-    } else {
-      await requestJson(`/expenses/${state.editingExpenseId}`, {
-        method: "PUT",
-        body: JSON.stringify(payload),
-      });
-      setStatus("Expense updated successfully.", "success");
-    }
-    resetExpenseForm();
-    await refreshDashboard();
-    await loadExpenses();
-  } catch (error) {
-    setStatus(error.message, "error");
-  }
-}
-
 async function handleExpenseTableClick(event) {
   const button = event.target.closest("button[data-action]");
   if (!button) {
     return;
   }
+
   const expenseId = Number(button.dataset.id);
   const action = button.dataset.action;
+
   try {
-    if (action === "edit-expense") {
-      beginExpenseEdit(expenseId);
+    if (action !== "assign-category") {
       return;
     }
-    if (action === "delete-expense") {
-      const confirmed = window.confirm(`Delete expense #${expenseId}?`);
-      if (!confirmed) {
-        return;
-      }
-      await requestJson(`/expenses/${expenseId}`, { method: "DELETE" });
-      if (state.editingExpenseId === expenseId) {
-        resetExpenseForm();
-      }
-      await refreshDashboard("Expense removed successfully.");
-      await loadExpenses();
+
+    const select = elements.expenseTableBody.querySelector(
+      `select[data-id="${expenseId}"]`,
+    );
+    const categoryId = Number.parseInt(select?.value || "", 10);
+    if (!Number.isInteger(categoryId) || categoryId <= 0) {
+      setStatus("Please select a valid category before assigning.", "error");
+      return;
     }
+
+    await requestJson(`/expenses/${expenseId}/category`, {
+      method: "PUT",
+      body: JSON.stringify({ categoryId }),
+    });
+    await refreshDashboard("Category assigned successfully.");
   } catch (error) {
     setStatus(error.message, "error");
   }
@@ -164,12 +106,17 @@ async function handleExpenseTableClick(event) {
 const currencyFormatter = new Intl.NumberFormat("sv-SE");
 
 async function requestJson(url, options = {}) {
+  const headers = {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  };
+
+  if (options.headers) {
+    Object.assign(headers, options.headers);
+  }
+
   const response = await fetch(url, {
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
+    headers,
     ...options,
   });
 
@@ -290,8 +237,6 @@ function renderCategories() {
 }
 
 function renderSnapshot() {
-  const categoryCount = state.categories.length;
-  const incomeCount = state.incomes.length;
   const totalCategorySpend = state.summaries.reduce(
     (sum, item) => sum + Number(item.totalExpense || 0),
     0,
@@ -345,6 +290,7 @@ async function loadCategories() {
   state.categories = categories;
   state.summaries = summaries;
   renderCategories();
+  renderExpenseTable();
   renderHeroStats();
   renderSnapshot();
 }
@@ -403,7 +349,7 @@ async function handleIncomeTableClick(event) {
     }
 
     if (action === "delete-income") {
-      const confirmed = window.confirm(`Delete income #${incomeId}?`);
+      const confirmed = globalThis.confirm(`Delete income #${incomeId}?`);
       if (!confirmed) {
         return;
       }
@@ -433,20 +379,14 @@ async function start() {
     setStatus("Income edit cancelled.", "success");
   });
 
-  // Expense UI events
-  elements.expenseForm.addEventListener("submit", handleExpenseSubmit);
+  // Expense category assignment events
   elements.expenseTableBody.addEventListener("click", handleExpenseTableClick);
   elements.refreshExpenseButton.addEventListener("click", () =>
     refreshDashboard("Expense data refreshed."),
   );
-  elements.expenseCancelButton.addEventListener("click", () => {
-    resetExpenseForm();
-    setStatus("Expense edit cancelled.", "success");
-  });
 
   try {
     await refreshDashboard("Dashboard loaded.");
-    renderExpenseCategoryOptions();
   } catch (error) {
     setStatus(error.message, "error");
   }

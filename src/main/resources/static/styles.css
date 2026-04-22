@@ -321,6 +321,30 @@ h2 {
     color: var(--danger);
 }
 
+.row-category-select {
+    width: 100%;
+    min-width: 180px;
+    border: 1px solid rgba(31, 26, 20, 0.14);
+    border-radius: 14px;
+    padding: 10px 36px 10px 12px;
+    font: inherit;
+    color: var(--text);
+    background-color: rgba(255, 255, 255, 0.9);
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%230e7c6b" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7.293 7.293a1 1 0 011.414 0L10 8.586l1.293-1.293a1 1 0 111.414 1.414l-2 2a1 1 0 01-1.414 0l-2-2a1 1 0 010-1.414z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 18px 18px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.row-category-select:focus {
+    outline: 3px solid rgba(14, 124, 107, 0.16);
+    border-color: rgba(14, 124, 107, 0.38);
+    box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
 .summary-stack {
     display: grid;
     gap: 12px;
