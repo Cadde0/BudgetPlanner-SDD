@@ -71,6 +71,7 @@ Layer intent:
 
 - [ ] Step 1 (T016) Implement category assignment flow in expense application logic
 - [ ] Step 2 (T017) Run integration test for FR-003 category assignment flow
+- [ ] Step 3 (T051) [P] Implement frontend UI for categorizing expenses
 
 ---
 
@@ -80,7 +81,8 @@ Layer intent:
 
 - [ ] Step 1 (T018) Implement category update and delete operations in backend
 - [ ] Step 2 (T019) Expose category update/delete endpoints
-- [ ] Step 3 (T020) Run integration test for FR-004 category edit/delete flow
+- [ ] Step 3 (T052) [P] Implement frontend UI for editing/deleting categories
+- [ ] Step 4 (T020) Run integration test for FR-004 category edit/delete flow
 
 ---
 
