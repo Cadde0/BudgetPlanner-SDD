@@ -1,3 +1,19 @@
+#newCategoryLabel {
+    grid-column: span 2;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    background: rgba(14, 124, 107, 0.06);
+    border-radius: 14px;
+    padding: 10px 14px 6px 14px;
+    transition: background 0.2s;
+}
+
+#newCategoryLabel input {
+    background: #fff;
+    border: 1.5px solid var(--accent-soft);
+    border-radius: 10px;
+    margin-top: 4px;
+}
 :root {
     color-scheme: light;
     --bg: #f2efe8;
