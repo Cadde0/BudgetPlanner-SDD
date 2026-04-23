@@ -86,4 +86,54 @@ class ExpensesFlowIntegrationTest {
 			}
 		}
 	}
+
+	@Test
+	void createExpensePersistsAndReturnsExpense() {
+		// Ensure at least one category exists
+		List<Category> categories = categoryRepository.findAll();
+		Category category;
+		if (categories.isEmpty()) {
+			category = new Category();
+			category.setName("Test Category");
+			category = categoryRepository.save(category);
+		} else {
+			category = categories.get(0);
+		}
+
+		String url = "http://localhost:" + port + "/expenses";
+
+		int amount = 123;
+		String description = "Integration test expense";
+
+		ResponseEntity<Expense> response = restTemplate.postForEntity(
+			url,
+			Map.of(
+				"amount", amount,
+				"description", description,
+				"categoryId", category.getId()
+			),
+			Expense.class
+		);
+
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+		Expense created = response.getBody();
+		assertThat(created).isNotNull();
+		assertThat(created.getId()).isNotNull();
+		assertThat(created.getAmount()).isEqualTo(amount);
+		assertThat(created.getDescription()).isEqualTo(description);
+		assertThat(created.getCategoryId()).isEqualTo(category.getId());
+
+		// Fetch by ID to verify persistence
+		ResponseEntity<Expense> getById = restTemplate.getForEntity(
+			"http://localhost:" + port + "/expenses/" + created.getId(),
+			Expense.class
+		);
+		assertThat(getById.getStatusCode()).isEqualTo(HttpStatus.OK);
+		Expense fetched = getById.getBody();
+		assertThat(fetched).isNotNull();
+		assertThat(fetched.getId()).isEqualTo(created.getId());
+		assertThat(fetched.getAmount()).isEqualTo(amount);
+		assertThat(fetched.getDescription()).isEqualTo(description);
+		assertThat(fetched.getCategoryId()).isEqualTo(category.getId());
+	}
 }
