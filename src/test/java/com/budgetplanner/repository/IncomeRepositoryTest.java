@@ -14,15 +14,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @JdbcTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ContextConfiguration(classes = com.budgetplanner.BudgetPlannerApplication.class)
 class IncomeRepositoryTest {
-
-    private static final int KNOWN_INCOME_ID = 20;
-    private static final int EXPECTED_INCOME_AMOUNT = 3000;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -35,23 +31,30 @@ class IncomeRepositoryTest {
     }
 
     @Test
-    void findAllContainsConfiguredIncomeFixture() {
-        assumeTrue(KNOWN_INCOME_ID > 0, "Set KNOWN_INCOME_ID to an existing row in your database");
+    void findAllContainsSavedIncomeFixture() {
+        Income created = incomeRepository.save(new Income(null, 4123));
 
-        List<Income> result = incomeRepository.findAll();
+        try {
+            List<Income> result = incomeRepository.findAll();
 
-        assertTrue(result.stream().anyMatch(income -> KNOWN_INCOME_ID == income.getId()));
+            assertTrue(result.stream().anyMatch(income -> created.getId().equals(income.getId())));
+        } finally {
+            incomeRepository.deleteById(created.getId());
+        }
     }
 
     @Test
-    void findByIdReturnsConfiguredIncomeFixture() {
-        assumeTrue(KNOWN_INCOME_ID > 0, "Set KNOWN_INCOME_ID to an existing row in your database");
-        assumeTrue(EXPECTED_INCOME_AMOUNT >= 0, "Set EXPECTED_INCOME_AMOUNT for that fixture row");
+    void findByIdReturnsSavedIncomeFixture() {
+        Income created = incomeRepository.save(new Income(null, 3000));
 
-        var result = incomeRepository.findById(KNOWN_INCOME_ID);
+        try {
+            var result = incomeRepository.findById(created.getId());
 
-        assertTrue(result.isPresent());
-        assertEquals(EXPECTED_INCOME_AMOUNT, result.get().getAmount());
+            assertTrue(result.isPresent());
+            assertEquals(3000, result.get().getAmount());
+        } finally {
+            incomeRepository.deleteById(created.getId());
+        }
     }
 
     @Test

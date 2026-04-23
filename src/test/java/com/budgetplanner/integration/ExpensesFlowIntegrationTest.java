@@ -201,4 +201,64 @@ class ExpensesFlowIntegrationTest {
 					Expense.class);
 		}
 	}
+
+	@Test
+	void deleteExpenseRemovesExpenseAndReturnsNotFoundAfterwards() {
+		String baseUrl = "http://localhost:" + port + "/expenses";
+
+		Integer createdExpenseId = null;
+		Integer temporaryCategoryId = null;
+
+		try {
+			List<Category> categories = categoryRepository.findAll();
+			Integer categoryId;
+			if (categories.isEmpty()) {
+				Category createdCategory = categoryRepository
+						.save(new Category(null, "T030 Category", null, "created for expense delete integration test"));
+				temporaryCategoryId = createdCategory.getId();
+				categoryId = createdCategory.getId();
+			} else {
+				categoryId = categories.get(0).getId();
+			}
+
+			Map<String, Object> createPayload = new HashMap<>();
+			createPayload.put("amount", 321);
+			createPayload.put("description", "T030 delete integration expense");
+			createPayload.put("categoryId", categoryId);
+
+			ResponseEntity<Expense> createResponse = restTemplate.postForEntity(baseUrl, createPayload, Expense.class);
+			assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+			assertThat(createResponse.getBody()).isNotNull();
+			assertThat(createResponse.getBody().getId()).isNotNull();
+
+			createdExpenseId = createResponse.getBody().getId();
+
+			ResponseEntity<Void> deleteResponse = restTemplate.exchange(
+					baseUrl + "/" + createdExpenseId,
+					HttpMethod.DELETE,
+					null,
+					Void.class);
+			assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+			ResponseEntity<Expense> getAfterDeleteResponse = restTemplate.getForEntity(
+					baseUrl + "/" + createdExpenseId,
+					Expense.class);
+			assertThat(getAfterDeleteResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+			ResponseEntity<Expense[]> getAllResponse = restTemplate.getForEntity(baseUrl, Expense[].class);
+			assertThat(getAllResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+			assertThat(getAllResponse.getBody()).isNotNull();
+			final Integer deletedExpenseId = createdExpenseId;
+			assertThat(getAllResponse.getBody()).noneMatch(expense -> deletedExpenseId.equals(expense.getId()));
+
+			createdExpenseId = null;
+		} finally {
+			if (createdExpenseId != null) {
+				restTemplate.exchange(baseUrl + "/" + createdExpenseId, HttpMethod.DELETE, null, Void.class);
+			}
+			if (temporaryCategoryId != null) {
+				categoryRepository.deleteById(temporaryCategoryId);
+			}
+		}
+	}
 }

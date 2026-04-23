@@ -23,7 +23,7 @@ Layer intent:
 4. [x] Edit/delete categories (FR-004): T019, T020, T021, T022
 5. [x] Add expenses (FR-005): T023, T024, T025, T026
 6. [x] Update expenses (FR-006): T027, T028
-7. [ ] Delete expenses (FR-007): T029, T030
+7. [x] Delete expenses (FR-007): T029, T030
 8. [ ] Perform arithmetic operations (FR-008): T031, T032, T033
 9. [ ] Present remaining budget in real time (FR-009): T034, T035, T036
 10. [ ] Summarize within categories (FR-010): T037, T038, T039
@@ -111,7 +111,7 @@ Layer intent:
 **Purpose**: Support deleting existing expense records.
 
 - [x] Step 1 (T029) Implement expense delete operation in backend
-- [ ] Step 2 (T030) Run integration test for FR-007 expense delete flow
+- [x] Step 2 (T030) Run integration test for FR-007 expense delete flow
 
 ---
 

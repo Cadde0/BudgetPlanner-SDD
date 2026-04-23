@@ -19,12 +19,6 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ExpenseRepositoryTest {
 
-    private static final int KNOWN_EXPENSE_ID = 26;
-    private static final int EXPECTED_EXPENSE_AMOUNT = 500;
-    private static final int EXPECTED_CATEGORY_ID = 5;
-    // Use null when the database row has no description (NULL/empty).
-    private static final String EXPECTED_DESCRIPTION = null;
-
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -36,29 +30,37 @@ class ExpenseRepositoryTest {
     }
 
     @Test
-    void findAllContainsConfiguredExpenseFixture() {
-        assumeTrue(KNOWN_EXPENSE_ID > 0, "Set KNOWN_EXPENSE_ID to an existing row in your database");
+    void findAllContainsSavedExpense() {
+        Integer existingCategoryId = findAnyCategoryId();
+        assumeTrue(existingCategoryId != null, "Test requires at least one existing category row");
 
-        List<Expense> result = expenseRepository.findAll();
+        Expense created = expenseRepository.save(new Expense(null, 741, existingCategoryId, "findAll fixture"));
 
-        assertTrue(result.stream().anyMatch(expense -> KNOWN_EXPENSE_ID == expense.getId()));
+        try {
+            List<Expense> result = expenseRepository.findAll();
+
+            assertTrue(result.stream().anyMatch(expense -> created.getId().equals(expense.getId())));
+        } finally {
+            jdbcTemplate.update("DELETE FROM expenses WHERE id = ?", created.getId());
+        }
     }
 
     @Test
-    void findByIdReturnsConfiguredExpenseFixture() {
-        assumeTrue(KNOWN_EXPENSE_ID > 0, "Set KNOWN_EXPENSE_ID to an existing row in your database");
-        assumeTrue(EXPECTED_EXPENSE_AMOUNT >= 0, "Set EXPECTED_EXPENSE_AMOUNT for that fixture row");
-        assumeTrue(EXPECTED_CATEGORY_ID >= 0, "Set EXPECTED_CATEGORY_ID for that fixture row");
-        var result = expenseRepository.findById(KNOWN_EXPENSE_ID);
+    void findByIdReturnsSavedExpenseFixture() {
+        Integer existingCategoryId = findAnyCategoryId();
+        assumeTrue(existingCategoryId != null, "Test requires at least one existing category row");
 
-        assertTrue(result.isPresent());
-        assertEquals(EXPECTED_EXPENSE_AMOUNT, result.get().getAmount());
-        assertEquals(EXPECTED_CATEGORY_ID, result.get().getCategoryId());
-        if (EXPECTED_DESCRIPTION == null) {
-            String actualDescription = result.get().getDescription();
-            assertTrue(actualDescription == null || actualDescription.isBlank());
-        } else {
-            assertEquals(EXPECTED_DESCRIPTION, result.get().getDescription());
+        Expense created = expenseRepository.save(new Expense(null, 987, existingCategoryId, "findById fixture"));
+
+        try {
+            var result = expenseRepository.findById(created.getId());
+
+            assertTrue(result.isPresent());
+            assertEquals(987, result.get().getAmount());
+            assertEquals(existingCategoryId, result.get().getCategoryId());
+            assertEquals("findById fixture", result.get().getDescription());
+        } finally {
+            jdbcTemplate.update("DELETE FROM expenses WHERE id = ?", created.getId());
         }
     }
 
@@ -71,22 +73,23 @@ class ExpenseRepositoryTest {
 
     @Test
     void savePersistsExpenseAndReturnsGeneratedId() {
-        assumeTrue(EXPECTED_CATEGORY_ID > 0, "Set EXPECTED_CATEGORY_ID to an existing category id in your database");
+        Integer existingCategoryId = findAnyCategoryId();
+        assumeTrue(existingCategoryId != null, "Test requires at least one existing category row");
 
-        Expense toCreate = new Expense(null, 987, EXPECTED_CATEGORY_ID, "created by T023 test");
+        Expense toCreate = new Expense(null, 987, existingCategoryId, "created by T023 test");
         Expense saved = expenseRepository.save(toCreate);
 
         assertNotNull(saved.getId());
         assertTrue(saved.getId() > 0);
         assertEquals(987, saved.getAmount());
-        assertEquals(EXPECTED_CATEGORY_ID, saved.getCategoryId());
+        assertEquals(existingCategoryId, saved.getCategoryId());
         assertEquals("created by T023 test", saved.getDescription());
 
         try {
             var fromDb = expenseRepository.findById(saved.getId());
             assertTrue(fromDb.isPresent());
             assertEquals(987, fromDb.get().getAmount());
-            assertEquals(EXPECTED_CATEGORY_ID, fromDb.get().getCategoryId());
+            assertEquals(existingCategoryId, fromDb.get().getCategoryId());
             assertEquals("created by T023 test", fromDb.get().getDescription());
         } finally {
             jdbcTemplate.update("DELETE FROM expenses WHERE id = ?", saved.getId());
@@ -95,9 +98,10 @@ class ExpenseRepositoryTest {
 
     @Test
     void deleteByIdRemovesExpense() {
-        assumeTrue(EXPECTED_CATEGORY_ID > 0, "Set EXPECTED_CATEGORY_ID to an existing category id in your database");
+        Integer existingCategoryId = findAnyCategoryId();
+        assumeTrue(existingCategoryId != null, "Test requires at least one existing category row");
 
-        Expense created = expenseRepository.save(new Expense(null, 321, EXPECTED_CATEGORY_ID, "delete by T029 test"));
+        Expense created = expenseRepository.save(new Expense(null, 321, existingCategoryId, "delete by T029 test"));
         try {
             boolean deleted = expenseRepository.deleteById(created.getId());
 
@@ -106,5 +110,10 @@ class ExpenseRepositoryTest {
         } finally {
             jdbcTemplate.update("DELETE FROM expenses WHERE id = ?", created.getId());
         }
+    }
+
+    private Integer findAnyCategoryId() {
+        List<Integer> ids = jdbcTemplate.query("SELECT id FROM category ORDER BY id LIMIT 1", (rs, rowNum) -> rs.getInt("id"));
+        return ids.isEmpty() ? null : ids.get(0);
     }
 }
