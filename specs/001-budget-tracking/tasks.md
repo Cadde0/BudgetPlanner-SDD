@@ -110,7 +110,7 @@ Layer intent:
 
 **Purpose**: Support deleting existing expense records.
 
-- [ ] Step 1 (T029) Implement expense delete operation in backend
+- [x] Step 1 (T029) Implement expense delete operation in backend
 - [ ] Step 2 (T030) Run integration test for FR-007 expense delete flow
 
 ---

@@ -6,7 +6,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -51,5 +53,25 @@ class ExpenseServiceTest {
         Expense invalid = new Expense(null, 600, null, "No category");
 
         assertThrows(IllegalArgumentException.class, () -> expenseService.createExpense(invalid));
+    }
+
+    @Test
+    void deleteExpenseReturnsTrueWhenRepositoryDeletesRow() {
+        when(expenseRepository.deleteById(11)).thenReturn(true);
+
+        boolean deleted = expenseService.deleteExpense(11);
+
+        assertTrue(deleted);
+        verify(expenseRepository).deleteById(11);
+    }
+
+    @Test
+    void deleteExpenseReturnsFalseWhenExpenseMissing() {
+        when(expenseRepository.deleteById(404)).thenReturn(false);
+
+        boolean deleted = expenseService.deleteExpense(404);
+
+        assertFalse(deleted);
+        verify(expenseRepository).deleteById(404);
     }
 }

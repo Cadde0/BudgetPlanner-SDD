@@ -92,4 +92,19 @@ class ExpenseRepositoryTest {
             jdbcTemplate.update("DELETE FROM expenses WHERE id = ?", saved.getId());
         }
     }
+
+    @Test
+    void deleteByIdRemovesExpense() {
+        assumeTrue(EXPECTED_CATEGORY_ID > 0, "Set EXPECTED_CATEGORY_ID to an existing category id in your database");
+
+        Expense created = expenseRepository.save(new Expense(null, 321, EXPECTED_CATEGORY_ID, "delete by T029 test"));
+        try {
+            boolean deleted = expenseRepository.deleteById(created.getId());
+
+            assertTrue(deleted);
+            assertFalse(expenseRepository.findById(created.getId()).isPresent());
+        } finally {
+            jdbcTemplate.update("DELETE FROM expenses WHERE id = ?", created.getId());
+        }
+    }
 }

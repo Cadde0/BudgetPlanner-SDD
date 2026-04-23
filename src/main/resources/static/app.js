@@ -207,6 +207,7 @@ function renderExpenseTable() {
               <div class="row-actions">
                 <button class="row-action" type="button" data-action="assign-category" data-id="${expense.id}">Assign</button>
                 <button class="row-action" type="button" data-action="edit-expense" data-id="${expense.id}">Edit</button>
+                <button class="row-action" type="button" data-action="delete-expense" data-id="${expense.id}" data-tone="danger">Delete</button>
               </div>
             </td>
         </tr>
@@ -241,6 +242,20 @@ async function handleExpenseTableClick(event) {
   try {
     if (action === "edit-expense") {
       beginExpenseEdit(expenseId);
+      return;
+    }
+
+    if (action === "delete-expense") {
+      const confirmed = globalThis.confirm(`Delete expense #${expenseId}?`);
+      if (!confirmed) {
+        return;
+      }
+
+      await requestJson(`/expenses/${expenseId}`, { method: "DELETE" });
+      if (state.editingExpenseId === expenseId) {
+        resetExpenseForm();
+      }
+      await refreshDashboard("Expense deleted successfully.");
       return;
     }
 
