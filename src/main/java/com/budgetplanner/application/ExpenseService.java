@@ -1,3 +1,4 @@
+
 package com.budgetplanner.application;
 
 import com.budgetplanner.model.Expense;
@@ -33,6 +34,18 @@ public class ExpenseService {
     public Optional<Expense> assignCategory(int id, int categoryId) {
         validationService.validateCategoryId(categoryId);
         return expenseRepository.updateCategory(id, categoryId);
+    }
+
+    /**
+     * Updates an existing expense by id.
+     * @param id Expense id
+     * @param expense Expense object with new data
+     * @return Optional of updated Expense, or empty if not found
+     */
+    public Optional<Expense> updateExpense(int id, Expense expense) {
+        validationService.validateExpenseAmount(expense.getAmount());
+        validationService.validateCategoryId(expense.getCategoryId());
+        return expenseRepository.updateExpense(id, expense);
     }
 
 }

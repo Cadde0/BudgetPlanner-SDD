@@ -91,4 +91,18 @@ public class ExpenseRepository {
         }
     }
 
+    public Optional<Expense> updateExpense(int id, Expense expense) {
+    int updated = jdbcTemplate.update(
+        "UPDATE expenses SET amount = ?, category_id = ?, description = ? WHERE id = ?",
+        expense.getAmount(),
+        expense.getCategoryId(),
+        expense.getDescription(),
+        id);
+    if (updated > 0) {
+        return findById(id);
+    } else {
+        return Optional.empty();
+    }
+}
+
 }
