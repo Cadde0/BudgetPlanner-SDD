@@ -90,7 +90,7 @@ Layer intent:
 
 **Purpose**: Support creating expenses in backend logic and UI.
 
-- [ ] Step 1 (T023) Implement expense create operation in backend (application/repository)
+- [x] Step 1 (T023) Implement expense create operation in backend (application/repository)
 - [ ] Step 2 (T024) Expose create Expense endpoint (POST /expenses)
 - [ ] Step 3 (T025) Implement frontend UI for entering expenses
 - [ ] Step 4 (T026) Run integration test for FR-005 expense create flow

@@ -1,10 +1,15 @@
 package com.budgetplanner.repository;
 
 import com.budgetplanner.model.Expense;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -36,13 +41,49 @@ public class ExpenseRepository {
         return results.stream().findFirst();
     }
 
+    public Expense save(Expense expense) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO expenses (amount, category_id, description) VALUES (?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS);
+            ps.setInt(1, expense.getAmount());
+            ps.setObject(2, expense.getCategoryId());
+            ps.setString(3, expense.getDescription());
+            return ps;
+        }, keyHolder);
+
+        Number generatedId = resolveGeneratedId(keyHolder);
+        int id = generatedId == null ? 0 : generatedId.intValue();
+        return new Expense(id, expense.getAmount(), expense.getCategoryId(), expense.getDescription());
+    }
+
+    private Number resolveGeneratedId(KeyHolder keyHolder) {
+        Map<String, Object> generatedKeys = keyHolder.getKeys();
+        if (generatedKeys == null || generatedKeys.isEmpty()) {
+            return keyHolder.getKey();
+        }
+
+        for (Map.Entry<String, Object> entry : generatedKeys.entrySet()) {
+            if ("id".equalsIgnoreCase(entry.getKey()) && entry.getValue() instanceof Number numberValue) {
+                return numberValue;
+            }
+        }
+
+        for (Object value : generatedKeys.values()) {
+            if (value instanceof Number numberValue) {
+                return numberValue;
+            }
+        }
+
+        return keyHolder.getKey();
+    }
 
     public Optional<Expense> updateCategory(int id, int categoryId) {
         int updated = jdbcTemplate.update(
                 "UPDATE expenses SET category_id = ? WHERE id = ?",
                 categoryId,
-                id
-        );
+                id);
         if (updated > 0) {
             return findById(id);
         } else {
@@ -51,4 +92,3 @@ public class ExpenseRepository {
     }
 
 }
-  

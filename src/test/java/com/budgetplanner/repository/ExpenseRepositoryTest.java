@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -18,9 +19,9 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ExpenseRepositoryTest {
 
-    private static final int KNOWN_EXPENSE_ID = 3;
+    private static final int KNOWN_EXPENSE_ID = 26;
     private static final int EXPECTED_EXPENSE_AMOUNT = 500;
-    private static final int EXPECTED_CATEGORY_ID = 1;
+    private static final int EXPECTED_CATEGORY_ID = 5;
     // Use null when the database row has no description (NULL/empty).
     private static final String EXPECTED_DESCRIPTION = null;
 
@@ -66,5 +67,29 @@ class ExpenseRepositoryTest {
         var result = expenseRepository.findById(Integer.MAX_VALUE);
 
         assertFalse(result.isPresent());
+    }
+
+    @Test
+    void savePersistsExpenseAndReturnsGeneratedId() {
+        assumeTrue(EXPECTED_CATEGORY_ID > 0, "Set EXPECTED_CATEGORY_ID to an existing category id in your database");
+
+        Expense toCreate = new Expense(null, 987, EXPECTED_CATEGORY_ID, "created by T023 test");
+        Expense saved = expenseRepository.save(toCreate);
+
+        assertNotNull(saved.getId());
+        assertTrue(saved.getId() > 0);
+        assertEquals(987, saved.getAmount());
+        assertEquals(EXPECTED_CATEGORY_ID, saved.getCategoryId());
+        assertEquals("created by T023 test", saved.getDescription());
+
+        try {
+            var fromDb = expenseRepository.findById(saved.getId());
+            assertTrue(fromDb.isPresent());
+            assertEquals(987, fromDb.get().getAmount());
+            assertEquals(EXPECTED_CATEGORY_ID, fromDb.get().getCategoryId());
+            assertEquals("created by T023 test", fromDb.get().getDescription());
+        } finally {
+            jdbcTemplate.update("DELETE FROM expenses WHERE id = ?", saved.getId());
+        }
     }
 }
