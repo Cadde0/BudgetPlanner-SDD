@@ -21,7 +21,7 @@ Layer intent:
 2. [x] Enter income (FR-002): T013, T014, T015
 3. [x] Categorize expenses (FR-003): T016, T017, T018
 4. [x] Edit/delete categories (FR-004): T019, T020, T021, T022
-5. [ ] Add expenses (FR-005): T023, T024, T025, T026
+5. [x] Add expenses (FR-005): T023, T024, T025, T026
 6. [ ] Update expenses (FR-006): T027, T028
 7. [ ] Delete expenses (FR-007): T029, T030
 8. [ ] Perform arithmetic operations (FR-008): T031, T032, T033
@@ -93,7 +93,7 @@ Layer intent:
 - [x] Step 1 (T023) Implement expense create operation in backend (application/repository)
 - [x] Step 2 (T024) Expose create Expense endpoint (POST /expenses)
 - [x] Step 3 (T025) Implement frontend UI for entering expenses
-- [ ] Step 4 (T026) Run integration test for FR-005 expense create flow
+- [x] Step 4 (T026) Run integration test for FR-005 expense create flow
 
 ---
 
