@@ -30,8 +30,8 @@ class ExpenseControllerTest {
 
         ExpenseController controller = new ExpenseController(expenseService);
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
-            .setControllerAdvice(new GlobalExceptionHandler())
-            .build();
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
     }
 
     @Test
@@ -52,41 +52,41 @@ class ExpenseControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-        @Test
-        void createExpenseReturnsCreatedWithLocation() throws Exception {
+    @Test
+    void createExpenseReturnsCreatedWithLocation() throws Exception {
         Expense createdExpense = new Expense(12, 700, 2, "Lunch");
         when(expenseService.createExpense(org.mockito.ArgumentMatchers.any(Expense.class))).thenReturn(createdExpense);
 
         mockMvc.perform(post("/expenses")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{" +
-                "\"amount\":700," +
-                "\"categoryId\":2," +
-                "\"description\":\"Lunch\"" +
-                "}"))
-            .andExpect(status().isCreated())
-            .andExpect(header().string("Location", "http://localhost/expenses/12"))
-            .andExpect(jsonPath("$.id").value(12))
-            .andExpect(jsonPath("$.amount").value(700))
-            .andExpect(jsonPath("$.categoryId").value(2))
-            .andExpect(jsonPath("$.description").value("Lunch"));
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{" +
+                        "\"amount\":700," +
+                        "\"categoryId\":2," +
+                        "\"description\":\"Lunch\"" +
+                        "}"))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "http://localhost/expenses/12"))
+                .andExpect(jsonPath("$.id").value(12))
+                .andExpect(jsonPath("$.amount").value(700))
+                .andExpect(jsonPath("$.categoryId").value(2))
+                .andExpect(jsonPath("$.description").value("Lunch"));
 
         verify(expenseService).createExpense(org.mockito.ArgumentMatchers.any(Expense.class));
-        }
+    }
 
-        @Test
-        void createExpenseReturnsBadRequestWhenCategoryIdMissing() throws Exception {
+    @Test
+    void createExpenseReturnsBadRequestWhenCategoryIdMissing() throws Exception {
         when(expenseService.createExpense(org.mockito.ArgumentMatchers.any(Expense.class)))
-            .thenThrow(new IllegalArgumentException("Category ID must be a positive integer."));
+                .thenThrow(new IllegalArgumentException("Category ID must be a positive integer."));
 
         mockMvc.perform(post("/expenses")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{" +
-                "\"amount\":700," +
-                "\"description\":\"Lunch\"" +
-                "}"))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.code").value("BAD_REQUEST"))
-            .andExpect(jsonPath("$.message").value("Category ID must be a positive integer."));
-        }
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{" +
+                        "\"amount\":700," +
+                        "\"description\":\"Lunch\"" +
+                        "}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.message").value("Category ID must be a positive integer."));
+    }
 }
