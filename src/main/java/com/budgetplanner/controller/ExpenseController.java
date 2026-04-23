@@ -52,8 +52,20 @@ public class ExpenseController {
         if (request == null || request.categoryId() == null) {
             throw new IllegalArgumentException("Category ID must be a positive integer.");
         }
-
         return expenseService.assignCategory(id, request.categoryId())
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Updates an existing expense by id.
+     * @param id Expense id
+     * @param expense Expense object with new data
+     * @return ResponseEntity with updated Expense or 404 if not found
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<Expense> updateExpense(@PathVariable int id, @RequestBody Expense expense) {
+        return expenseService.updateExpense(id, expense)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

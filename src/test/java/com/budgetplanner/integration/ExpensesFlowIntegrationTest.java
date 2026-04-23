@@ -4,6 +4,7 @@ import com.budgetplanner.model.Category;
 import com.budgetplanner.model.Expense;
 import com.budgetplanner.repository.CategoryRepository;
 import com.budgetplanner.repository.ExpenseRepository;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -135,5 +136,69 @@ class ExpensesFlowIntegrationTest {
 		assertThat(fetched.getAmount()).isEqualTo(amount);
 		assertThat(fetched.getDescription()).isEqualTo(description);
 		assertThat(fetched.getCategoryId()).isEqualTo(category.getId());
+	}
+
+	@Test
+	void updateExpenseChangesAmountDescriptionAndCategory() {
+		List<Expense> expenses = expenseRepository.findAll();
+		List<Category> categories = categoryRepository.findAll();
+
+		assumeTrue(!expenses.isEmpty(), "Test requires at least one existing expense row");
+		assumeTrue(!categories.isEmpty(), "Test requires at least one existing category row");
+
+		Expense original = expenses.get(0);
+
+		Integer targetCategoryId = categories.stream()
+				.map(Category::getId)
+				.filter(id -> id != null && id > 0)
+				.filter(id -> !id.equals(original.getCategoryId()))
+				.findFirst()
+				.orElse(original.getCategoryId());
+
+		int updatedAmount = original.getAmount() + 1;
+		String updatedDescription = (original.getDescription() == null ? "" : original.getDescription()) + " updated";
+
+		String url = "http://localhost:" + port + "/expenses/" + original.getId();
+
+		try {
+			Map<String, Object> updatePayload = new HashMap<>();
+			updatePayload.put("amount", updatedAmount);
+			updatePayload.put("description", updatedDescription);
+			updatePayload.put("categoryId", targetCategoryId);
+
+			ResponseEntity<Expense> updateResponse = restTemplate.exchange(
+					url,
+					HttpMethod.PUT,
+					new HttpEntity<>(updatePayload),
+					Expense.class);
+
+			assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+			assertThat(updateResponse.getBody()).isNotNull();
+			assertThat(updateResponse.getBody().getId()).isEqualTo(original.getId());
+			assertThat(updateResponse.getBody().getAmount()).isEqualTo(updatedAmount);
+			assertThat(updateResponse.getBody().getDescription()).isEqualTo(updatedDescription);
+			assertThat(updateResponse.getBody().getCategoryId()).isEqualTo(targetCategoryId);
+
+			ResponseEntity<Expense> getByIdResponse = restTemplate.getForEntity(
+					url,
+					Expense.class);
+
+			assertThat(getByIdResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+			assertThat(getByIdResponse.getBody()).isNotNull();
+			assertThat(getByIdResponse.getBody().getAmount()).isEqualTo(updatedAmount);
+			assertThat(getByIdResponse.getBody().getDescription()).isEqualTo(updatedDescription);
+			assertThat(getByIdResponse.getBody().getCategoryId()).isEqualTo(targetCategoryId);
+		} finally {
+			Map<String, Object> restorePayload = new HashMap<>();
+			restorePayload.put("amount", original.getAmount());
+			restorePayload.put("description", original.getDescription());
+			restorePayload.put("categoryId", original.getCategoryId());
+
+			restTemplate.exchange(
+					url,
+					HttpMethod.PUT,
+					new HttpEntity<>(restorePayload),
+					Expense.class);
+		}
 	}
 }
