@@ -19,8 +19,8 @@ Layer intent:
 
 1. [x] Access the local database (FR-001): T004, T005, T006, T007, T008, T009, T010, T011, T012
 2. [x] Enter income (FR-002): T013, T014, T015
-3. [ ] Categorize expenses (FR-003): T016, T017, T018
-4. [ ] Edit/delete categories (FR-004): T019, T020, T021, T022
+3. [x] Categorize expenses (FR-003): T016, T017, T018
+4. [x] Edit/delete categories (FR-004): T019, T020, T021, T022
 5. [ ] Add expenses (FR-005): T023, T024, T025, T026
 6. [ ] Update expenses (FR-006): T027, T028
 7. [ ] Delete expenses (FR-007): T029, T030
