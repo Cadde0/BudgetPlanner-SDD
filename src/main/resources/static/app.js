@@ -30,7 +30,90 @@ const elements = {
   // Expense category assignment UI
   expenseTableBody: document.getElementById("expenseTableBody"),
   refreshExpenseButton: document.getElementById("refreshExpenseButton"),
+  // Expense add form
+  expenseForm: document.getElementById("expenseForm"),
+  expenseAmount: document.getElementById("expenseAmount"),
+  expenseDescription: document.getElementById("expenseDescription"),
+  expenseCategorySelect: document.getElementById("expenseCategorySelect"),
+  newCategoryLabel: document.getElementById("newCategoryLabel"),
+  newCategoryName: document.getElementById("newCategoryName"),
+  expenseSubmitButton: document.getElementById("expenseSubmitButton"),
 };
+function populateExpenseCategorySelect() {
+  const select = elements.expenseCategorySelect;
+  if (!select) return;
+  // Remove all except the first and last ("Select category" and "+ New category...")
+  while (select.options.length > 2) {
+    select.remove(1);
+  }
+  state.categories.forEach((cat) => {
+    const opt = document.createElement("option");
+    opt.value = cat.id;
+    opt.textContent = cat.name;
+    select.insertBefore(opt, select.options[select.options.length - 1]);
+  });
+}
+
+function handleExpenseCategoryChange() {
+  const select = elements.expenseCategorySelect;
+  const showNew = select.value === "__new__";
+  elements.newCategoryLabel.style.display = showNew ? "block" : "none";
+  if (!showNew) elements.newCategoryName.value = "";
+}
+
+async function handleExpenseFormSubmit(event) {
+  event.preventDefault();
+  const amount = Number.parseInt(elements.expenseAmount.value, 10);
+  const description = elements.expenseDescription.value.trim();
+  const categoryValue = elements.expenseCategorySelect.value;
+  let categoryId = null;
+
+  if (!Number.isInteger(amount) || amount <= 0) {
+    setStatus("Expense amount must be a positive whole number.", "error");
+    return;
+  }
+
+  if (!categoryValue) {
+    setStatus("Please select a category or create a new one.", "error");
+    return;
+  }
+
+  if (categoryValue === "__new__") {
+    const newName = elements.newCategoryName.value.trim();
+    if (!newName) {
+      setStatus("Please enter a name for the new category.", "error");
+      return;
+    }
+    // Create category first
+    try {
+      const newCat = await requestJson("/categories", {
+        method: "POST",
+        body: JSON.stringify({ name: newName }),
+      });
+      categoryId = newCat.id;
+      await refreshDashboard("Category created and selected.");
+    } catch (error) {
+      setStatus(error.message, "error");
+      return;
+    }
+  } else {
+    categoryId = Number(categoryValue);
+  }
+
+  // Now create the expense
+  try {
+    await requestJson("/expenses", {
+      method: "POST",
+      body: JSON.stringify({ amount, description, categoryId }),
+    });
+    setStatus("Expense added successfully.", "success");
+    elements.expenseForm.reset();
+    elements.newCategoryLabel.style.display = "none";
+    await refreshDashboard();
+  } catch (error) {
+    setStatus(error.message, "error");
+  }
+}
 
 function renderExpenseTable() {
   if (!state.expenses.length) {
@@ -399,6 +482,7 @@ async function loadCategories() {
   renderExpenseTable();
   renderHeroStats();
   renderSnapshot();
+  populateExpenseCategorySelect();
 }
 
 async function refreshDashboard(message = "Data refreshed.") {
@@ -499,6 +583,15 @@ async function start() {
   elements.refreshExpenseButton.addEventListener("click", () =>
     refreshDashboard("Expense data refreshed."),
   );
+
+  // Expense add form events
+  if (elements.expenseForm) {
+    elements.expenseForm.addEventListener("submit", handleExpenseFormSubmit);
+    elements.expenseCategorySelect.addEventListener(
+      "change",
+      handleExpenseCategoryChange,
+    );
+  }
 
   try {
     await refreshDashboard("Dashboard loaded.");

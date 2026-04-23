@@ -83,13 +83,61 @@
         <article class="panel panel-wide">
           <div class="panel-header">
             <div>
-              <p class="panel-kicker">Expense categorization</p>
-              <h2>Assign categories to existing expenses.</h2>
+              <p class="panel-kicker">Add Expense</p>
+              <h2>Add a new expense and assign a category.</h2>
             </div>
-            <button class="ghost-button" type="button" id="refreshExpenseButton">
+            <button
+              class="ghost-button"
+              type="button"
+              id="refreshExpenseButton">
               Refresh
             </button>
           </div>
+
+          <form class="entry-form" id="expenseForm">
+            <label>
+              Amount
+              <input
+                type="number"
+                id="expenseAmount"
+                min="1"
+                step="1"
+                placeholder="e.g. 100"
+                required />
+            </label>
+            <label>
+              Description (optional)
+              <input
+                type="text"
+                id="expenseDescription"
+                maxlength="255"
+                placeholder="e.g. Coffee" />
+            </label>
+            <label>
+              Category
+              <select id="expenseCategorySelect" required>
+                <option value="">Select category</option>
+                <!-- Categories will be populated dynamically -->
+                <option value="__new__">+ New category...</option>
+              </select>
+            </label>
+            <label id="newCategoryLabel" style="display: none">
+              New Category Name
+              <input
+                type="text"
+                id="newCategoryName"
+                maxlength="255"
+                placeholder="e.g. Groceries" />
+            </label>
+            <div class="form-actions">
+              <button
+                type="submit"
+                class="primary-button"
+                id="expenseSubmitButton">
+                Add expense
+              </button>
+            </div>
+          </form>
 
           <div class="table-wrap">
             <table class="data-table" aria-label="Expense entries">
@@ -132,15 +180,35 @@
             </label>
             <label>
               Limit
-              <input type="number" id="categoryLimit" min="0" step="1" placeholder="optional" />
+              <input
+                type="number"
+                id="categoryLimit"
+                min="0"
+                step="1"
+                placeholder="optional" />
             </label>
             <label class="category-description-field">
               Description
-              <input type="text" id="categoryDescription" maxlength="255" placeholder="e.g. Monthly groceries" />
+              <input
+                type="text"
+                id="categoryDescription"
+                maxlength="255"
+                placeholder="e.g. Monthly groceries" />
             </label>
             <div class="form-actions">
-              <button type="submit" class="primary-button" id="categorySubmitButton">Save category</button>
-              <button type="button" class="secondary-button" id="categoryCancelButton" hidden>Cancel edit</button>
+              <button
+                type="submit"
+                class="primary-button"
+                id="categorySubmitButton">
+                Save category
+              </button>
+              <button
+                type="button"
+                class="secondary-button"
+                id="categoryCancelButton"
+                hidden>
+                Cancel edit
+              </button>
             </div>
           </form>
 
