@@ -5,9 +5,12 @@ const state = {
   expenses: [],
   editingIncomeId: null,
   editingCategoryId: null,
+  editingExpenseId: null,
 };
 
 const elements = {
+  viewSwitcher: document.querySelector(".view-switcher"),
+  viewButtons: Array.from(document.querySelectorAll(".view-button")),
   statusBanner: document.getElementById("statusBanner"),
   heroStats: document.getElementById("heroStats"),
   incomeTableBody: document.getElementById("incomeTableBody"),
@@ -32,13 +35,35 @@ const elements = {
   refreshExpenseButton: document.getElementById("refreshExpenseButton"),
   // Expense add form
   expenseForm: document.getElementById("expenseForm"),
+  expenseId: document.getElementById("expenseId"),
   expenseAmount: document.getElementById("expenseAmount"),
   expenseDescription: document.getElementById("expenseDescription"),
   expenseCategorySelect: document.getElementById("expenseCategorySelect"),
   newCategoryLabel: document.getElementById("newCategoryLabel"),
   newCategoryName: document.getElementById("newCategoryName"),
   expenseSubmitButton: document.getElementById("expenseSubmitButton"),
+  expenseCancelButton: document.getElementById("expenseCancelButton"),
 };
+
+function setPanelView(view) {
+  document.body.dataset.panelView = view;
+  elements.viewButtons.forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.view === view);
+  });
+}
+
+function initViewSwitcher() {
+  if (!elements.viewButtons.length) {
+    return;
+  }
+
+  setPanelView("all");
+  elements.viewButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      setPanelView(button.dataset.view || "all");
+    });
+  });
+}
 function populateExpenseCategorySelect() {
   const select = elements.expenseCategorySelect;
   if (!select) return;
@@ -102,17 +127,57 @@ async function handleExpenseFormSubmit(event) {
 
   // Now create the expense
   try {
-    await requestJson("/expenses", {
-      method: "POST",
-      body: JSON.stringify({ amount, description, categoryId }),
-    });
-    setStatus("Expense added successfully.", "success");
-    elements.expenseForm.reset();
-    elements.newCategoryLabel.style.display = "none";
+    if (state.editingExpenseId == null) {
+      await requestJson("/expenses", {
+        method: "POST",
+        body: JSON.stringify({ amount, description, categoryId }),
+      });
+      setStatus("Expense added successfully.", "success");
+    } else {
+      await requestJson(`/expenses/${state.editingExpenseId}`, {
+        method: "PUT",
+        body: JSON.stringify({ amount, description, categoryId }),
+      });
+      setStatus("Expense updated successfully.", "success");
+    }
+
+    resetExpenseForm();
     await refreshDashboard();
   } catch (error) {
     setStatus(error.message, "error");
   }
+}
+
+function resetExpenseForm() {
+  state.editingExpenseId = null;
+  elements.expenseId.value = "";
+  elements.expenseAmount.value = "";
+  elements.expenseDescription.value = "";
+  elements.expenseCategorySelect.value = "";
+  elements.newCategoryName.value = "";
+  elements.newCategoryLabel.style.display = "none";
+  elements.expenseSubmitButton.textContent = "Add expense";
+  elements.expenseCancelButton.hidden = true;
+}
+
+function beginExpenseEdit(expenseId) {
+  const expense = state.expenses.find((entry) => entry.id === expenseId);
+  if (!expense) {
+    setStatus("The expense entry no longer exists.", "error");
+    return;
+  }
+
+  state.editingExpenseId = expenseId;
+  elements.expenseId.value = String(expenseId);
+  elements.expenseAmount.value = String(expense.amount ?? "");
+  elements.expenseDescription.value = expense.description || "";
+  elements.expenseCategorySelect.value =
+    expense.categoryId == null ? "" : String(expense.categoryId);
+  elements.newCategoryName.value = "";
+  elements.newCategoryLabel.style.display = "none";
+  elements.expenseSubmitButton.textContent = "Update expense";
+  elements.expenseCancelButton.hidden = false;
+  elements.expenseAmount.focus();
 }
 
 function renderExpenseTable() {
@@ -130,16 +195,19 @@ function renderExpenseTable() {
     .map(
       (expense) => `
         <tr>
-            <td>${expense.description || ""}</td>
-            <td>${formatAmount(expense.amount)}</td>
-            <td>
+            <td data-label="Description">${expense.description || ""}</td>
+            <td data-label="Amount">${formatAmount(expense.amount)}</td>
+            <td data-label="Category">
               <select class="row-category-select" data-id="${expense.id}">
                 <option value="">Select category</option>
                 ${categoryOptions}
               </select>
             </td>
-            <td>
-              <button class="row-action" type="button" data-action="assign-category" data-id="${expense.id}">Assign</button>
+            <td data-label="Actions">
+              <div class="row-actions">
+                <button class="row-action" type="button" data-action="assign-category" data-id="${expense.id}">Assign</button>
+                <button class="row-action" type="button" data-action="edit-expense" data-id="${expense.id}">Edit</button>
+              </div>
             </td>
         </tr>
     `,
@@ -171,6 +239,11 @@ async function handleExpenseTableClick(event) {
   const action = button.dataset.action;
 
   try {
+    if (action === "edit-expense") {
+      beginExpenseEdit(expenseId);
+      return;
+    }
+
     if (action !== "assign-category") {
       return;
     }
@@ -273,8 +346,8 @@ function renderIncomeTable() {
     .map(
       (income) => `
         <tr>
-            <td>${formatAmount(income.amount)}</td>
-            <td>
+            <td data-label="Amount">${formatAmount(income.amount)}</td>
+            <td data-label="Actions">
                 <div class="row-actions">
                     <button class="row-action" type="button" data-action="edit-income" data-id="${income.id}">Edit</button>
                     <button class="row-action" type="button" data-action="delete-income" data-id="${income.id}" data-tone="danger">Delete</button>
@@ -300,10 +373,10 @@ function renderCategories() {
 
       return `
         <tr>
-            <td>${category.name}</td>
-            <td>${limit == null ? "Not set" : formatAmount(limit)}</td>
-            <td>${category.description || "No description"}</td>
-            <td>
+          <td data-label="Name">${category.name}</td>
+          <td data-label="Limit">${limit == null ? "Not set" : formatAmount(limit)}</td>
+          <td data-label="Description">${category.description || "No description"}</td>
+          <td data-label="Actions">
                 <div class="row-actions">
                     <button class="row-action" type="button" data-action="edit-category" data-id="${category.id}">Edit</button>
                     <button class="row-action" type="button" data-action="delete-category" data-id="${category.id}" data-tone="danger">Delete</button>
@@ -556,6 +629,7 @@ async function handleIncomeTableClick(event) {
 }
 
 async function start() {
+  initViewSwitcher();
   elements.incomeForm.addEventListener("submit", handleIncomeSubmit);
   elements.incomeTableBody.addEventListener("click", handleIncomeTableClick);
   elements.refreshIncomeButton.addEventListener("click", () =>
@@ -591,6 +665,10 @@ async function start() {
       "change",
       handleExpenseCategoryChange,
     );
+    elements.expenseCancelButton.addEventListener("click", () => {
+      resetExpenseForm();
+      setStatus("Expense edit cancelled.", "success");
+    });
   }
 
   try {

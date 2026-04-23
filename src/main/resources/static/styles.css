@@ -162,9 +162,49 @@ h2 {
     background: linear-gradient(135deg, rgba(182, 75, 61, 0.12), rgba(255, 255, 255, 0.88));
 }
 
+.view-switcher {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(73, 58, 39, 0.14);
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.view-switcher-label {
+    font-weight: 700;
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-right: 4px;
+}
+
+.view-button {
+    appearance: none;
+    border: 1px solid rgba(73, 58, 39, 0.18);
+    background: rgba(255, 255, 255, 0.78);
+    color: var(--text);
+    border-radius: 999px;
+    padding: 8px 12px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.view-button.is-active {
+    background: var(--accent-soft);
+    border-color: rgba(14, 124, 107, 0.4);
+    color: var(--accent-strong);
+}
+
 .grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-areas:
+        "expense expense expense expense expense expense expense expense income income income income"
+        "expense expense expense expense expense expense expense expense category category category category"
+        "expense expense expense expense expense expense expense expense snapshot snapshot snapshot snapshot";
     gap: 18px;
 }
 
@@ -174,7 +214,47 @@ h2 {
 }
 
 .panel-wide {
-    grid-row: span 2;
+    grid-row: auto;
+}
+
+.income-panel {
+    grid-area: income;
+    align-self: start;
+    padding: 20px;
+}
+
+.expense-panel {
+    grid-area: expense;
+}
+
+.category-panel {
+    grid-area: category;
+}
+
+.snapshot-panel {
+    grid-area: snapshot;
+}
+
+.expense-panel .panel-header h2 {
+    max-width: none;
+}
+
+.expense-panel .entry-form {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: end;
+}
+
+.expense-panel .entry-form .form-actions {
+    grid-column: span 3;
+}
+
+.expense-panel #newCategoryLabel {
+    grid-column: span 3;
+}
+
+.income-panel .table-wrap {
+    max-height: 260px;
+    overflow-y: auto;
 }
 
 .panel-header {
@@ -296,7 +376,7 @@ h2 {
 }
 
 .table-wrap {
-    overflow-x: auto;
+    overflow-x: hidden;
     border-radius: 20px;
     border: 1px solid rgba(31, 26, 20, 0.09);
     background: rgba(255, 255, 255, 0.55);
@@ -305,7 +385,8 @@ h2 {
 .data-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 360px;
+    min-width: 0;
+    table-layout: fixed;
 }
 
 .data-table th,
@@ -314,6 +395,8 @@ h2 {
     text-align: left;
     vertical-align: middle;
     border-bottom: 1px solid rgba(31, 26, 20, 0.08);
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .data-table th {
@@ -349,9 +432,68 @@ h2 {
     color: var(--danger);
 }
 
+.expense-table thead th:last-child,
+.expense-table tbody td:last-child {
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.96);
+}
+
+.expense-table thead th:last-child {
+    z-index: 2;
+}
+
+.expense-panel .table-wrap {
+    overflow-x: hidden;
+}
+
+.expense-table {
+    min-width: 0;
+}
+
+.expense-table th,
+.expense-table td {
+    padding: 12px 10px;
+}
+
+.expense-table th:nth-child(1),
+.expense-table td:nth-child(1) {
+    width: 30%;
+}
+
+.expense-table th:nth-child(2),
+.expense-table td:nth-child(2) {
+    width: 15%;
+}
+
+.expense-table th:nth-child(3),
+.expense-table td:nth-child(3) {
+    width: 24%;
+}
+
+.expense-table th:nth-child(4),
+.expense-table td:nth-child(4) {
+    width: 31%;
+}
+
+.expense-table td:nth-child(1) {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.expense-table .row-actions {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}
+
+.expense-table .row-action {
+    padding: 7px 10px;
+}
+
 .row-category-select {
     width: 100%;
-    min-width: 180px;
+    min-width: 0;
     border: 1px solid rgba(31, 26, 20, 0.14);
     border-radius: 14px;
     padding: 10px 36px 10px 12px;
@@ -436,14 +578,63 @@ h2 {
     text-align: center;
 }
 
-@media (max-width: 940px) {
+@media (max-width: 1440px) {
+    .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-areas:
+            "expense expense"
+            "income category"
+            "snapshot snapshot";
+    }
+
+    .expense-panel .entry-form {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .expense-panel .entry-form .form-actions,
+    .expense-panel #newCategoryLabel {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 1200px) {
+    .view-switcher {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
     .hero,
     .grid {
         grid-template-columns: 1fr;
+        grid-template-areas:
+            "expense"
+            "income"
+            "category"
+            "snapshot";
     }
 
     .panel-wide {
         grid-row: auto;
+    }
+
+    body[data-panel-view="expense"] .income-panel,
+    body[data-panel-view="expense"] .category-panel,
+    body[data-panel-view="expense"] .snapshot-panel,
+    body[data-panel-view="income"] .expense-panel,
+    body[data-panel-view="income"] .category-panel,
+    body[data-panel-view="income"] .snapshot-panel,
+    body[data-panel-view="category"] .expense-panel,
+    body[data-panel-view="category"] .income-panel,
+    body[data-panel-view="category"] .snapshot-panel,
+    body[data-panel-view="snapshot"] .expense-panel,
+    body[data-panel-view="snapshot"] .income-panel,
+    body[data-panel-view="snapshot"] .category-panel {
+        display: none;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 10px 8px;
     }
 }
 
@@ -463,6 +654,93 @@ h2 {
 
     .entry-form {
         grid-template-columns: 1fr;
+    }
+
+    .expense-panel .entry-form .form-actions,
+    .expense-panel #newCategoryLabel {
+        grid-column: auto;
+    }
+
+    .table-wrap {
+        border: 0;
+        background: transparent;
+    }
+
+    .data-table,
+    .data-table thead,
+    .data-table tbody,
+    .data-table tr,
+    .data-table th,
+    .data-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .data-table {
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .data-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        border: 0;
+        padding: 0;
+    }
+
+    .data-table tbody tr {
+        margin-bottom: 12px;
+        padding: 12px;
+        border: 1px solid rgba(31, 26, 20, 0.09);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.76);
+    }
+
+    .data-table td {
+        position: relative;
+        border: 0;
+        padding: 10px 0 10px 46%;
+        min-height: 38px;
+    }
+
+    .data-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        top: 10px;
+        width: 42%;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        font-weight: 700;
+    }
+
+    .data-table .row-actions {
+        flex-wrap: wrap;
+    }
+
+    .data-table .row-action {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .data-table thead th:last-child,
+    .data-table tbody td:last-child {
+        position: static;
+        right: auto;
+        z-index: auto;
+        background: transparent;
+    }
+
+    .data-table .empty-state {
+        padding: 10px 0;
+        text-align: left;
     }
 
     .panel {

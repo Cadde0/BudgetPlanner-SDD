@@ -22,8 +22,27 @@
 
       <section class="banner" id="statusBanner" aria-live="polite"></section>
 
+      <section class="view-switcher" aria-label="Workspace views">
+        <span class="view-switcher-label">View</span>
+        <button type="button" class="view-button is-active" data-view="all">
+          All
+        </button>
+        <button type="button" class="view-button" data-view="expense">
+          Expenses
+        </button>
+        <button type="button" class="view-button" data-view="income">
+          Income
+        </button>
+        <button type="button" class="view-button" data-view="category">
+          Categories
+        </button>
+        <button type="button" class="view-button" data-view="snapshot">
+          Snapshot
+        </button>
+      </section>
+
       <section class="grid">
-        <article class="panel panel-wide">
+        <article class="panel income-panel">
           <div class="panel-header">
             <div>
               <p class="panel-kicker">Income management</p>
@@ -80,7 +99,7 @@
           </div>
         </article>
 
-        <article class="panel panel-wide">
+        <article class="panel panel-wide expense-panel">
           <div class="panel-header">
             <div>
               <p class="panel-kicker">Add Expense</p>
@@ -95,6 +114,7 @@
           </div>
 
           <form class="entry-form" id="expenseForm">
+            <input type="hidden" id="expenseId" />
             <label>
               Amount
               <input
@@ -136,17 +156,24 @@
                 id="expenseSubmitButton">
                 Add expense
               </button>
+              <button
+                type="button"
+                class="secondary-button"
+                id="expenseCancelButton"
+                hidden>
+                Cancel edit
+              </button>
             </div>
           </form>
 
           <div class="table-wrap">
-            <table class="data-table" aria-label="Expense entries">
+            <table class="data-table expense-table" aria-label="Expense entries">
               <thead>
                 <tr>
                   <th>Description</th>
                   <th>Amount</th>
                   <th>Category</th>
-                  <th>Assign</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody id="expenseTableBody">
@@ -158,7 +185,7 @@
           </div>
         </article>
 
-        <aside class="panel" aria-label="Category overview">
+        <aside class="panel category-panel" aria-label="Category overview">
           <div class="panel-header">
             <div>
               <p class="panel-kicker">Category overview</p>
@@ -231,7 +258,7 @@
           </div>
         </aside>
 
-        <aside class="panel" aria-label="Budget snapshot">
+        <aside class="panel snapshot-panel" aria-label="Budget snapshot">
           <div class="panel-header">
             <div>
               <p class="panel-kicker">Budget snapshot</p>
