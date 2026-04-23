@@ -48,4 +48,8 @@ public class ExpenseService {
         return expenseRepository.updateExpense(id, expense);
     }
 
+    public boolean deleteExpense(int id) {
+        return expenseRepository.deleteById(id);
+    }
+
 }

@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -89,4 +90,20 @@ class ExpenseControllerTest {
                 .andExpect(jsonPath("$.error").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.message").value("Category ID must be a positive integer."));
     }
+
+        @Test
+        void deleteExpenseReturnsNoContentWhenFound() throws Exception {
+                when(expenseService.deleteExpense(1)).thenReturn(true);
+
+                mockMvc.perform(delete("/expenses/1"))
+                                .andExpect(status().isNoContent());
+        }
+
+        @Test
+        void deleteExpenseReturnsNotFoundWhenMissing() throws Exception {
+                when(expenseService.deleteExpense(999)).thenReturn(false);
+
+                mockMvc.perform(delete("/expenses/999"))
+                                .andExpect(status().isNotFound());
+        }
 }
