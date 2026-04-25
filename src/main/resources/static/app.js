@@ -279,7 +279,7 @@ function renderExpenseTable() {
           </div>
 
           <div class="category-summary-strip">
-            <span><strong>${spendShare}%</strong> of spend</span>
+            <span><strong>${spendShare}%</strong> of total expenses</span>
             <span><strong>${categoryLimit == null ? "Not set" : formatAmount(categoryLimit)}</strong> limit</span>
             <span><strong>${remainingLimit == null ? "N/A" : formatAmount(remainingLimit)}</strong> left</span>
             ${limitUsageMarkup}
