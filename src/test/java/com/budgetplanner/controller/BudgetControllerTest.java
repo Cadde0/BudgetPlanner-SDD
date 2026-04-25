@@ -27,7 +27,7 @@ class BudgetControllerTest {
 
     @Test
     void getRemainingBudgetReturnsBudgetSnapshot() throws Exception {
-        when(budgetService.calculateBudgetSnapshot())
+        when(budgetService.getCurrentSnapshot())
                 .thenReturn(new BudgetService.BudgetSnapshot(2500, 800, 1700));
 
         mockMvc.perform(get("/budget/remaining"))
@@ -39,7 +39,7 @@ class BudgetControllerTest {
 
     @Test
     void getRemainingBudgetSupportsNegativeRemainingBalance() throws Exception {
-        when(budgetService.calculateBudgetSnapshot())
+        when(budgetService.getCurrentSnapshot())
                 .thenReturn(new BudgetService.BudgetSnapshot(1000, 1300, -300));
 
         mockMvc.perform(get("/budget/remaining"))

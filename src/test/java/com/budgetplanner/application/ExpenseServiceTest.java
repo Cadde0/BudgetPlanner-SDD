@@ -18,13 +18,15 @@ class ExpenseServiceTest {
 
     private ExpenseRepository expenseRepository;
     private ValidationService validationService;
+    private BudgetService budgetService;
     private ExpenseService expenseService;
 
     @BeforeEach
     void setUp() {
         expenseRepository = mock(ExpenseRepository.class);
         validationService = new ValidationService();
-        expenseService = new ExpenseService(expenseRepository, validationService);
+        budgetService = mock(BudgetService.class);
+        expenseService = new ExpenseService(expenseRepository, validationService, budgetService);
     }
 
     @Test
@@ -39,6 +41,7 @@ class ExpenseServiceTest {
         assertEquals(600, result.getAmount());
         assertEquals(1, result.getCategoryId());
         verify(expenseRepository).save(toCreate);
+        verify(budgetService).refreshBudgetSnapshot();
     }
 
     @Test
@@ -63,6 +66,7 @@ class ExpenseServiceTest {
 
         assertTrue(deleted);
         verify(expenseRepository).deleteById(11);
+        verify(budgetService).refreshBudgetSnapshot();
     }
 
     @Test

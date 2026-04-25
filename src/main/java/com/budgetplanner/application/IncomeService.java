@@ -11,10 +11,13 @@ public class IncomeService {
 
     private final IncomeRepository incomeRepository;
     private final ValidationService validationService;
+    private final BudgetService budgetService;
 
-    public IncomeService(IncomeRepository incomeRepository, ValidationService validationService) {
+    public IncomeService(IncomeRepository incomeRepository, ValidationService validationService,
+                         BudgetService budgetService) {
         this.incomeRepository = incomeRepository;
         this.validationService = validationService;
+        this.budgetService = budgetService;
     }
 
     public List<Income> getAllIncome() {
@@ -27,15 +30,23 @@ public class IncomeService {
 
     public Income createIncome(Income income) {
         validationService.validateIncomeAmount(income.getAmount());
-        return incomeRepository.save(income);
+        Income createdIncome = incomeRepository.save(income);
+        budgetService.refreshBudgetSnapshot();
+        return createdIncome;
     }
 
     public Optional<Income> updateIncome(int id, Income income) {
         validationService.validateIncomeAmount(income.getAmount());
-        return incomeRepository.update(id, income);
+        Optional<Income> updatedIncome = incomeRepository.update(id, income);
+        updatedIncome.ifPresent(incomeValue -> budgetService.refreshBudgetSnapshot());
+        return updatedIncome;
     }
 
     public boolean deleteIncome(int id) {
-        return incomeRepository.deleteById(id);
+        boolean deleted = incomeRepository.deleteById(id);
+        if (deleted) {
+            budgetService.refreshBudgetSnapshot();
+        }
+        return deleted;
     }
 }

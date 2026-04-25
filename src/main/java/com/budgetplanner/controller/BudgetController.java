@@ -17,7 +17,7 @@ public class BudgetController {
 
     @GetMapping("/remaining")
     public BudgetResponse getRemainingBudget() {
-        BudgetService.BudgetSnapshot snapshot = budgetService.calculateBudgetSnapshot();
+        BudgetService.BudgetSnapshot snapshot = budgetService.getCurrentSnapshot();
         return new BudgetResponse(
                 snapshot.totalIncome(),
                 snapshot.totalExpense(),

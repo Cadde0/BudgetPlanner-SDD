@@ -11,10 +11,13 @@ import java.util.Optional;
 public class ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final ValidationService validationService;
+    private final BudgetService budgetService;
 
-    public ExpenseService(ExpenseRepository expenseRepository, ValidationService validationService) {
+    public ExpenseService(ExpenseRepository expenseRepository, ValidationService validationService,
+                          BudgetService budgetService) {
         this.expenseRepository = expenseRepository;
         this.validationService = validationService;
+        this.budgetService = budgetService;
     }
 
     public List<Expense> getAllExpenses() {
@@ -28,12 +31,16 @@ public class ExpenseService {
     public Expense createExpense(Expense expense) {
         validationService.validateExpenseAmount(expense.getAmount());
         validationService.validateCategoryId(expense.getCategoryId());
-        return expenseRepository.save(expense);
+        Expense createdExpense = expenseRepository.save(expense);
+        budgetService.refreshBudgetSnapshot();
+        return createdExpense;
     }
 
     public Optional<Expense> assignCategory(int id, int categoryId) {
         validationService.validateCategoryId(categoryId);
-        return expenseRepository.updateCategory(id, categoryId);
+        Optional<Expense> updatedExpense = expenseRepository.updateCategory(id, categoryId);
+        updatedExpense.ifPresent(expense -> budgetService.refreshBudgetSnapshot());
+        return updatedExpense;
     }
 
     /**
@@ -45,11 +52,17 @@ public class ExpenseService {
     public Optional<Expense> updateExpense(int id, Expense expense) {
         validationService.validateExpenseAmount(expense.getAmount());
         validationService.validateCategoryId(expense.getCategoryId());
-        return expenseRepository.updateExpense(id, expense);
+        Optional<Expense> updatedExpense = expenseRepository.updateExpense(id, expense);
+        updatedExpense.ifPresent(expenseValue -> budgetService.refreshBudgetSnapshot());
+        return updatedExpense;
     }
 
     public boolean deleteExpense(int id) {
-        return expenseRepository.deleteById(id);
+        boolean deleted = expenseRepository.deleteById(id);
+        if (deleted) {
+            budgetService.refreshBudgetSnapshot();
+        }
+        return deleted;
     }
 
 }
