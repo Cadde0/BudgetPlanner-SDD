@@ -27,7 +27,6 @@ Layer intent:
 8. [x] Perform arithmetic operations (FR-008): T031, T032, T033, T034, T035, T036
 9. [x] Present remaining budget in real time (FR-009): Covered by FR-008 tasks (T034, T035, T036)
 10. [x] Summarize within categories (FR-010): T037, T038, T039
-11. [ ] Set a budget limit (FR-011): T040, T041, T042, T043
 
 ## Foundation (Shared Infrastructure)
 
@@ -135,17 +134,6 @@ Layer intent:
 - [x] Step 1 (T037) Implement category summary endpoint/service output
 - [x] Step 2 (T038) Implement expenses in specific category UI
 - [x] Step 3 (T039) Run integration test for FR-010 summary flow
-
----
-
-## FR-011 - Set a budget limit
-
-**Purpose**: Let users define limits and apply them in calculations and warnings.
-
-- [ ] Step 1 (T040) Implement category limit update flow
-- [ ] Step 2 (T041) Apply limit logic in budget calculations and warnings
-- [ ] Step 3 (T042) Implement frontend controls for category limits
-- [ ] Step 4 (T043) Run integration test for FR-011 budget-limit flow
 
 ---
 

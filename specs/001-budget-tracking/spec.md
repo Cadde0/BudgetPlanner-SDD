@@ -157,21 +157,6 @@ As a user, I want category summaries so I can see where money is being spent.
 
 ---
 
-### Phase 11 - Set a Budget Limit
-
-As a user, I want to set a budget limit so I can control spending.
-
-**Why this priority**: Budget limits are the final control layer for spending awareness.
-
-**Independent Test**: Set a budget limit and verify that calculations and warnings reflect it.
-
-**Acceptance Scenarios**:
-
-1. **Given** a category limit exists, **When** I update it, **Then** the new limit is saved.
-2. **Given** spending exceeds the limit, **When** the system recalculates, **Then** the limit status is reflected.
-
----
-
 ### Edge Cases
 
 - What happens if a user tries to enter a negative expense? (System prevents or warns)
@@ -193,7 +178,7 @@ As a user, I want to set a budget limit so I can control spending.
 - **FR-009**: System MUST perform arithmetic operations.
 - **FR-010**: System MUST present the remaining budget in real time.
 - **FR-011**: System MUST summarize expenses within categories.
-- **FR-012**: Users MUST be able to set a budget limit.
+- **FR-012**: Users MUST be able to set a budget limit within the categories.
 
 ### Non-Functional Requirements
 
