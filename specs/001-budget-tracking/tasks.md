@@ -124,7 +124,7 @@ Layer intent:
 - [x] Step 3 (T033) Run integration test for FR-008 arithmetic flow
 - [x] Step 4 (T034) Connect budget calculation updates to data changes
 - [x] Step 5 (T035) Implement real-time budget updates in frontend
-- [ ] Step 6 (T036) Run integration test for FR-008 real-time budget flow
+- [x] Step 6 (T036) Run integration test for FR-008 real-time budget flow
 
 ---
 
