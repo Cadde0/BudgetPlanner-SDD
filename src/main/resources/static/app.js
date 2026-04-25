@@ -33,9 +33,7 @@ const elements = {
   categorySubmitButton: document.getElementById("categorySubmitButton"),
   categoryCancelButton: document.getElementById("categoryCancelButton"),
   categoryTableBody: document.getElementById("categoryTableBody"),
-  snapshotGrid: document.getElementById("snapshotGrid"),
-  // Expense category assignment UI
-  expenseTableBody: document.getElementById("expenseTableBody"),
+  categoryExpensePanels: document.getElementById("categoryExpensePanels"),
   refreshExpenseButton: document.getElementById("refreshExpenseButton"),
   // Expense add form
   expenseForm: document.getElementById("expenseForm"),
@@ -185,48 +183,128 @@ function beginExpenseEdit(expenseId) {
 }
 
 function renderExpenseTable() {
-  if (!state.expenses.length) {
-    elements.expenseTableBody.innerHTML =
-      '<tr><td colspan="4" class="empty-state">No expenses were found.</td></tr>';
+  if (!elements.categoryExpensePanels) {
     return;
   }
 
-  const categoryOptions = state.categories
-    .map((cat) => `<option value="${cat.id}">${cat.name}</option>`)
-    .join("");
+  if (!state.categories.length) {
+    elements.categoryExpensePanels.innerHTML =
+      '<div class="loading-state">No categories found.</div>';
+    return;
+  }
 
-  elements.expenseTableBody.innerHTML = state.expenses
-    .map(
-      (expense) => `
-        <tr>
-            <td data-label="Description">${expense.description || ""}</td>
-            <td data-label="Amount">${formatAmount(expense.amount)}</td>
-            <td data-label="Category">
-              <select class="row-category-select" data-id="${expense.id}">
-                <option value="">Select category</option>
-                ${categoryOptions}
-              </select>
-            </td>
-            <td data-label="Actions">
-              <div class="row-actions">
-                <button class="row-action" type="button" data-action="assign-category" data-id="${expense.id}">Assign</button>
-                <button class="row-action" type="button" data-action="edit-expense" data-id="${expense.id}">Edit</button>
-                <button class="row-action" type="button" data-action="delete-expense" data-id="${expense.id}" data-tone="danger">Delete</button>
-              </div>
-            </td>
-        </tr>
-    `,
-    )
-    .join("");
+  const totalCategorySpend = state.summaries.reduce(
+    (sum, item) => sum + Number(item.totalExpense || 0),
+    0,
+  );
 
-  state.expenses.forEach((expense) => {
-    const select = elements.expenseTableBody.querySelector(
-      `select[data-id="${expense.id}"]`,
-    );
-    if (select && expense.categoryId != null) {
-      select.value = String(expense.categoryId);
-    }
-  });
+  const summaryByCategoryId = new Map(
+    state.summaries.map((summary) => [Number(summary.categoryId), summary]),
+  );
+
+  elements.categoryExpensePanels.innerHTML = state.categories
+    .map((category) => {
+      const categoryId = Number(category.id);
+      const categoryExpenses = state.expenses.filter(
+        (expense) => Number(expense.categoryId) === categoryId,
+      );
+      const fallbackSpend = categoryExpenses.reduce(
+        (sum, expense) => sum + Number(expense.amount || 0),
+        0,
+      );
+      const summary = summaryByCategoryId.get(categoryId);
+      const categorySpend = Number(summary?.totalExpense ?? fallbackSpend);
+      const spendShare =
+        totalCategorySpend > 0
+          ? Math.round((categorySpend / totalCategorySpend) * 100)
+          : 0;
+      const categoryLimit =
+        category.categoryLimit == null ? null : Number(category.categoryLimit);
+      const limitUsage =
+        categoryLimit != null && categoryLimit > 0
+          ? Math.round((categorySpend / categoryLimit) * 100)
+          : null;
+      const isOverLimit = limitUsage != null && limitUsage > 100;
+      const remainingLimit =
+        categoryLimit == null
+          ? null
+          : Math.max(categoryLimit - categorySpend, 0);
+      const overLimitClass = isOverLimit ? ' class="is-over-limit"' : "";
+      const limitUsageMarkup =
+        limitUsage == null
+          ? ""
+          : `<span${overLimitClass}><strong${overLimitClass}>${limitUsage}%</strong> of limit</span>`;
+
+      const expenseRows =
+        categoryExpenses.length === 0
+          ? '<tr><td colspan="3" class="empty-state">No expenses in this category.</td></tr>'
+          : categoryExpenses
+              .map((expense) => {
+                const expenseCategoryId = Number(expense.categoryId);
+                const rowCategoryOptions = state.categories
+                  .map((cat) => {
+                    const selected =
+                      Number(cat.id) === expenseCategoryId ? " selected" : "";
+                    return `<option value="${cat.id}"${selected}>${escapeHtml(cat.name)}</option>`;
+                  })
+                  .join("");
+
+                return `
+                  <tr>
+                      <td data-label="Description">${escapeHtml(expense.description || "No description")}</td>
+                      <td data-label="Amount">${formatAmount(expense.amount)}</td>
+                      <td data-label="Actions">
+                        <div class="row-actions">
+                          <select class="row-category-select" data-role="category-select" data-id="${expense.id}" aria-label="Select category for expense ${expense.id}">
+                            <option value="">Select category</option>
+                            ${rowCategoryOptions}
+                          </select>
+                          <button class="row-action" type="button" data-action="assign-category" data-id="${expense.id}">Assign</button>
+                          <button class="row-action" type="button" data-action="edit-expense" data-id="${expense.id}">Edit</button>
+                          <button class="row-action" type="button" data-action="delete-expense" data-id="${expense.id}" data-tone="danger">Delete</button>
+                        </div>
+                      </td>
+                  </tr>
+                `;
+              })
+              .join("");
+
+      return `
+        <article class="category-expense-panel" aria-label="${escapeHtml(category.name)} expenses">
+          <div class="panel-header category-expense-panel-header">
+            <div>
+              <p class="panel-kicker">${escapeHtml(category.name)}</p>
+            </div>
+            <span class="category-panel-total">${formatAmount(categorySpend)}</span>
+          </div>
+
+          <div class="category-summary-strip">
+            <span><strong>${spendShare}%</strong> of spend</span>
+            <span><strong>${categoryLimit == null ? "Not set" : formatAmount(categoryLimit)}</strong> limit</span>
+            <span><strong>${remainingLimit == null ? "N/A" : formatAmount(remainingLimit)}</strong> left</span>
+            ${limitUsageMarkup}
+          </div>
+
+          ${limitUsage == null ? "" : `<div class="category-meter" aria-hidden="true"><span style="width: ${Math.min(limitUsage, 100)}%"></span></div>`}
+
+          <div class="table-wrap">
+            <table class="data-table expense-table" aria-label="${escapeHtml(category.name)} expense entries">
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th>Amount</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${expenseRows}
+              </tbody>
+            </table>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
 }
 
 async function loadExpenses() {
@@ -244,6 +322,24 @@ async function handleExpenseTableClick(event) {
   const action = button.dataset.action;
 
   try {
+    if (action === "assign-category") {
+      const row = button.closest("tr");
+      const select = row?.querySelector('select[data-role="category-select"]');
+      const categoryId = Number.parseInt(select?.value || "", 10);
+
+      if (!Number.isInteger(categoryId) || categoryId <= 0) {
+        setStatus("Please select a valid category before assigning.", "error");
+        return;
+      }
+
+      await requestJson(`/expenses/${expenseId}/category`, {
+        method: "PUT",
+        body: JSON.stringify({ categoryId }),
+      });
+      await refreshDashboard("Category assigned successfully.");
+      return;
+    }
+
     if (action === "edit-expense") {
       beginExpenseEdit(expenseId);
       return;
@@ -263,24 +359,13 @@ async function handleExpenseTableClick(event) {
       return;
     }
 
-    if (action !== "assign-category") {
+    if (
+      action !== "assign-category" &&
+      action !== "edit-expense" &&
+      action !== "delete-expense"
+    ) {
       return;
     }
-
-    const select = elements.expenseTableBody.querySelector(
-      `select[data-id="${expenseId}"]`,
-    );
-    const categoryId = Number.parseInt(select?.value || "", 10);
-    if (!Number.isInteger(categoryId) || categoryId <= 0) {
-      setStatus("Please select a valid category before assigning.", "error");
-      return;
-    }
-
-    await requestJson(`/expenses/${expenseId}/category`, {
-      method: "PUT",
-      body: JSON.stringify({ categoryId }),
-    });
-    await refreshDashboard("Category assigned successfully.");
   } catch (error) {
     setStatus(error.message, "error");
   }
@@ -581,63 +666,6 @@ async function handleCategoryTableClick(event) {
   }
 }
 
-function renderSnapshot() {
-  const totalCategorySpend = state.summaries.reduce(
-    (sum, item) => sum + Number(item.totalExpense || 0),
-    0,
-  );
-
-  if (!state.summaries.length) {
-    elements.snapshotGrid.innerHTML = `
-      <article class="snapshot-card">
-        <span class="metric-label">Category spend</span>
-        <div class="metric-value">${formatAmount(0)}</div>
-        <p class="snapshot-note">No category totals yet. Add expenses to populate this summary.</p>
-      </article>
-    `;
-    return;
-  }
-
-  const sortedSummaries = [...state.summaries].sort(
-    (first, second) =>
-      Number(second.totalExpense || 0) - Number(first.totalExpense || 0),
-  );
-
-  const categoryCards = sortedSummaries
-    .map((summary) => {
-      const amount = Number(summary.totalExpense || 0);
-      const share =
-        totalCategorySpend > 0
-          ? Math.round((amount / totalCategorySpend) * 100)
-          : 0;
-
-      return `
-        <article class="category-card">
-          <h3>${escapeHtml(summary.categoryName || "Uncategorized")}</h3>
-          <div class="category-figure">
-            <strong>${formatAmount(amount)}</strong>
-            <span class="category-share">${share}% of spend</span>
-          </div>
-          <div class="category-meter" aria-hidden="true">
-            <span style="width: ${share}%"></span>
-          </div>
-        </article>
-      `;
-    })
-    .join("");
-
-  elements.snapshotGrid.innerHTML = `
-        <article class="snapshot-card snapshot-overview">
-            <span class="metric-label">Category spend</span>
-            <div class="metric-value">${formatAmount(totalCategorySpend)}</div>
-            <p class="snapshot-note">Each category card shows the total amount spent in that category.</p>
-        </article>
-        <div class="summary-stack" aria-label="Category expense totals">
-          ${categoryCards}
-        </div>
-    `;
-}
-
 function resetIncomeForm() {
   state.editingIncomeId = null;
   elements.incomeId.value = "";
@@ -665,7 +693,6 @@ async function loadIncome() {
   state.incomes = await requestJson("/income");
   renderIncomeTable();
   renderHeroStats();
-  renderSnapshot();
 }
 
 async function loadCategories() {
@@ -679,7 +706,6 @@ async function loadCategories() {
   renderCategories();
   renderExpenseTable();
   renderHeroStats();
-  renderSnapshot();
   populateExpenseCategorySelect();
 }
 
@@ -778,8 +804,12 @@ async function start() {
     setStatus("Income edit cancelled.", "success");
   });
 
-  // Expense category assignment events
-  elements.expenseTableBody.addEventListener("click", handleExpenseTableClick);
+  if (elements.categoryExpensePanels) {
+    elements.categoryExpensePanels.addEventListener(
+      "click",
+      handleExpenseTableClick,
+    );
+  }
   elements.refreshExpenseButton.addEventListener("click", () =>
     refreshDashboard("Expense data refreshed."),
   );

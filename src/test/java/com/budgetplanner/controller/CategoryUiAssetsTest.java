@@ -33,9 +33,37 @@ class CategoryUiAssetsTest {
     void appJsContainsPerCategorySummaryRendering() throws IOException {
         String js = readResource("/static/app.js");
 
-        assertTrue(js.contains("summary-stack"));
+        assertTrue(js.contains("category-summary-strip"));
         assertTrue(js.contains("category-meter"));
-        assertTrue(js.contains("% of spend"));
+        assertTrue(js.contains("of spend"));
+    }
+
+    @Test
+    void indexHtmlContainsCategoryExpensesGridElements() throws IOException {
+        String html = readResource("/static/index.html");
+
+        assertTrue(html.contains("id=\"categoryExpensePanels\""));
+        assertTrue(html.contains("class=\"category-expense-panels\""));
+    }
+
+    @Test
+    void appJsContainsCategoryExpensesRendering() throws IOException {
+        String js = readResource("/static/app.js");
+
+        assertTrue(js.contains("renderExpenseTable"));
+        assertTrue(js.contains("class=\"category-expense-panel\""));
+        assertTrue(js.contains("class=\"category-summary-strip\""));
+        assertTrue(js.contains("categoryExpensePanels"));
+    }
+
+    @Test
+    void stylesCssContainsCategoryGridStyles() throws IOException {
+        String css = readResource("/static/styles.css");
+
+        assertTrue(css.contains(".category-expense-panels"));
+        assertTrue(css.contains(".category-expense-panel"));
+        assertTrue(css.contains("grid-template-columns"));
+        assertTrue(css.contains(".category-summary-strip"));
     }
 
     private String readResource(String path) throws IOException {

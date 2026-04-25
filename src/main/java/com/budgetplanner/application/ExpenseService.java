@@ -65,4 +65,13 @@ public class ExpenseService {
         return deleted;
     }
 
+    /**
+     * Get all expenses for a specific category.
+     * @param categoryId the category id
+     * @return list of expenses in the category
+     */
+    public List<Expense> getExpensesByCategory(int categoryId) {
+        return expenseRepository.findByCategory(categoryId);
+    }
+
 }

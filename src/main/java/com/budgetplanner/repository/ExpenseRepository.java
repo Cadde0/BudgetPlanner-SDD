@@ -126,4 +126,16 @@ public class ExpenseRepository {
         return jdbcTemplate.update("DELETE FROM expenses WHERE id = ?", id) > 0;
     }
 
+    /**
+     * Find all expenses for a given category.
+     * @param categoryId the category id
+     * @return list of expenses for the given category
+     */
+    public List<Expense> findByCategory(int categoryId) {
+        return jdbcTemplate.query(
+                "SELECT id, amount, category_id, description FROM expenses WHERE category_id = ? ORDER BY id",
+                EXPENSE_ROW_MAPPER,
+                categoryId);
+    }
+
 }

@@ -133,7 +133,7 @@ Layer intent:
 **Purpose**: Provide grouped category-level totals and summaries.
 
 - [x] Step 1 (T037) Implement category summary endpoint/service output
-- [ ] Step 2 (T038) Implement expenses in specific category UI
+- [x] Step 2 (T038) Implement expenses in specific category UI
 - [ ] Step 3 (T039) Run integration test for FR-010 summary flow
 
 ---
