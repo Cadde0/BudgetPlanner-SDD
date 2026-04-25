@@ -24,8 +24,8 @@ Layer intent:
 5. [x] Add expenses (FR-005): T023, T024, T025, T026
 6. [x] Update expenses (FR-006): T027, T028
 7. [x] Delete expenses (FR-007): T029, T030
-8. [ ] Perform arithmetic operations (FR-008): T031, T032, T033, T034, T035, T036
-9. [ ] Present remaining budget in real time (FR-009): Covered by FR-008 tasks (T034, T035, T036)
+8. [x] Perform arithmetic operations (FR-008): T031, T032, T033, T034, T035, T036
+9. [x] Present remaining budget in real time (FR-009): Covered by FR-008 tasks (T034, T035, T036)
 10. [x] Summarize within categories (FR-010): T037, T038, T039
 11. [ ] Set a budget limit (FR-011): T040, T041, T042, T043
 
