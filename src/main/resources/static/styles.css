@@ -111,8 +111,17 @@ h2 {
 
 .hero-stats {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 14px;
+}
+
+.hero-live {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+    letter-spacing: 0.01em;
+    line-height: 1.45;
 }
 
 .stat-card,
@@ -676,6 +685,10 @@ h2 {
 
     .hero-stats {
         grid-template-columns: 1fr;
+    }
+
+    .hero-live {
+        grid-column: auto;
     }
 
     .entry-form {

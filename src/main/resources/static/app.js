@@ -3,6 +3,9 @@ const state = {
   categories: [],
   summaries: [],
   expenses: [],
+  budgetSnapshot: null,
+  budgetSyncedAt: null,
+  budgetPollTimer: null,
   editingIncomeId: null,
   editingCategoryId: null,
   editingExpenseId: null,
@@ -13,6 +16,7 @@ const elements = {
   viewButtons: Array.from(document.querySelectorAll(".view-button")),
   statusBanner: document.getElementById("statusBanner"),
   heroStats: document.getElementById("heroStats"),
+  budgetSyncStatus: document.getElementById("budgetSyncStatus"),
   incomeTableBody: document.getElementById("incomeTableBody"),
   incomeForm: document.getElementById("incomeForm"),
   incomeId: document.getElementById("incomeId"),
@@ -337,15 +341,12 @@ function escapeHtml(value) {
 }
 
 function renderHeroStats() {
-  const totalIncome = state.incomes.reduce(
-    (sum, income) => sum + Number(income.amount || 0),
-    0,
+  const budget = state.budgetSnapshot || getLocalBudgetSnapshot();
+  const totalIncome = Number(budget.totalIncome || 0);
+  const totalExpense = Number(budget.totalExpense || 0);
+  const remaining = Number(
+    budget.remainingBudget ?? totalIncome - totalExpense,
   );
-  const totalCategorySpend = state.summaries.reduce(
-    (sum, item) => sum + Number(item.totalExpense || 0),
-    0,
-  );
-  const remaining = totalIncome - totalCategorySpend;
 
   elements.heroStats.innerHTML = `
         <article class="stat-card">
@@ -353,10 +354,68 @@ function renderHeroStats() {
             <div class="stat-value">${formatAmount(totalIncome)}</div>
         </article>
         <article class="stat-card">
+            <span class="stat-label">Total expense</span>
+            <div class="stat-value">${formatAmount(totalExpense)}</div>
+        </article>
+        <article class="stat-card">
             <span class="stat-label">Budget remainder</span>
             <div class="stat-value">${formatAmount(remaining)}</div>
         </article>
     `;
+
+  if (elements.budgetSyncStatus) {
+    elements.budgetSyncStatus.textContent = state.budgetSyncedAt
+      ? `Live budget updated at ${new Date(state.budgetSyncedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}.`
+      : "Live budget updates automatically as income and expenses change.";
+  }
+}
+
+function getLocalBudgetSnapshot() {
+  const totalIncome = state.incomes.reduce(
+    (sum, income) => sum + Number(income.amount || 0),
+    0,
+  );
+  const totalExpense = state.expenses.reduce(
+    (sum, expense) => sum + Number(expense.amount || 0),
+    0,
+  );
+
+  return {
+    totalIncome,
+    totalExpense,
+    remainingBudget: totalIncome - totalExpense,
+  };
+}
+
+async function loadBudgetSnapshot(options = {}) {
+  try {
+    const snapshot = await requestJson("/budget/remaining");
+    state.budgetSnapshot = snapshot;
+    state.budgetSyncedAt = Date.now();
+    renderHeroStats();
+    return snapshot;
+  } catch (error) {
+    if (!state.budgetSnapshot) {
+      renderHeroStats();
+    }
+
+    if (!options.silent) {
+      throw error;
+    }
+
+    console.warn("Budget snapshot refresh failed:", error);
+    return null;
+  }
+}
+
+function startBudgetPolling() {
+  if (state.budgetPollTimer != null) {
+    clearInterval(state.budgetPollTimer);
+  }
+
+  state.budgetPollTimer = globalThis.setInterval(() => {
+    loadBudgetSnapshot({ silent: true });
+  }, 5000);
 }
 
 function renderIncomeTable() {
@@ -626,6 +685,7 @@ async function loadCategories() {
 
 async function refreshDashboard(message = "Data refreshed.") {
   await Promise.all([loadIncome(), loadCategories(), loadExpenses()]);
+  await loadBudgetSnapshot();
   setStatus(message, "success");
 }
 
@@ -739,6 +799,7 @@ async function start() {
 
   try {
     await refreshDashboard("Dashboard loaded.");
+    startBudgetPolling();
   } catch (error) {
     setStatus(error.message, "error");
   }
