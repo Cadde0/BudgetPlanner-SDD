@@ -14,7 +14,7 @@ class ExpenseUiAssetsTest {
         String html = readResource("/static/index.html");
 
         assertTrue(html.contains("id=\"expenseForm\""));
-        assertTrue(html.contains("id=\"expenseTableBody\""));
+        assertTrue(html.contains("id=\"categoryExpensePanels\""));
         assertTrue(html.contains("id=\"expenseSubmitButton\""));
         assertTrue(html.contains("id=\"expenseCancelButton\""));
     }
@@ -23,6 +23,10 @@ class ExpenseUiAssetsTest {
     void appJsContainsExpenseDeleteHandlers() throws IOException {
         String js = readResource("/static/app.js");
 
+        assertTrue(js.contains("assign-category"));
+        assertTrue(js.contains("Please select a valid category before assigning."));
+        assertTrue(js.contains("/expenses/${expenseId}/category"));
+        assertTrue(js.contains("Category assigned successfully."));
         assertTrue(js.contains("delete-expense"));
         assertTrue(js.contains("Delete expense #${expenseId}?"));
         assertTrue(js.contains("/expenses/${expenseId}"));

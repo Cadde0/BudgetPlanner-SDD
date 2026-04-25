@@ -1,8 +1,10 @@
 package com.budgetplanner.controller;
 
 import com.budgetplanner.model.Category;
+import com.budgetplanner.model.Expense;
 import com.budgetplanner.repository.CategoryRepository;
 import com.budgetplanner.repository.ExpenseRepository;
+import com.budgetplanner.application.ExpenseService;
 import java.net.URI;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,10 +23,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class CategoryController {
     private final CategoryRepository categoryRepository;
     private final ExpenseRepository expenseRepository;
+    private final ExpenseService expenseService;
 
-    public CategoryController(CategoryRepository categoryRepository, ExpenseRepository expenseRepository) {
+    public CategoryController(CategoryRepository categoryRepository, ExpenseRepository expenseRepository,
+                           ExpenseService expenseService) {
         this.categoryRepository = categoryRepository;
         this.expenseRepository = expenseRepository;
+        this.expenseService = expenseService;
     }
 
     @GetMapping
@@ -42,6 +47,11 @@ public class CategoryController {
                         cat.getName(),
                         expenseTotals.getOrDefault(cat.getId(), 0)))
             .toList();
+    }
+
+    @GetMapping("/{id}/expenses")
+    public List<Expense> getExpensesByCategory(@PathVariable int id) {
+        return expenseService.getExpensesByCategory(id);
     }
 
     @PostMapping

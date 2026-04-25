@@ -212,8 +212,7 @@ h2 {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     grid-template-areas:
         "expense expense expense expense expense expense expense expense income income income income"
-        "expense expense expense expense expense expense expense expense category category category category"
-        "expense expense expense expense expense expense expense expense snapshot snapshot snapshot snapshot";
+        "expense expense expense expense expense expense expense expense category category category category";
     gap: 18px;
 }
 
@@ -238,10 +237,6 @@ h2 {
 
 .category-panel {
     grid-area: category;
-}
-
-.snapshot-panel {
-    grid-area: snapshot;
 }
 
 .expense-panel .panel-header h2 {
@@ -457,6 +452,68 @@ h2 {
     overflow-x: hidden;
 }
 
+.category-expense-panels {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.category-expense-panel {
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    padding: 16px;
+    border: 1px solid rgba(31, 26, 20, 0.08);
+    background: rgba(255, 255, 255, 0.65);
+    box-shadow: 0 10px 30px rgba(44, 33, 18, 0.08);
+}
+
+.category-expense-panel .table-wrap {
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.category-expense-panel-header {
+    margin-bottom: 10px;
+}
+
+.category-expense-panel .panel-kicker {
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    font-weight: 800;
+}
+
+.category-expense-panel-header h3 {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.category-panel-total {
+    font-family: "Georgia", "Times New Roman", serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--accent-strong);
+}
+
+.category-summary-strip {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 12px;
+    margin-bottom: 10px;
+    color: var(--muted);
+    font-size: 0.88rem;
+}
+
+.category-summary-strip strong {
+    color: var(--text);
+    font-size: 0.92rem;
+}
+
+.category-summary-strip .is-over-limit,
+.category-summary-strip strong.is-over-limit {
+    color: var(--danger);
+}
+
 .expense-table {
     min-width: 0;
 }
@@ -468,22 +525,17 @@ h2 {
 
 .expense-table th:nth-child(1),
 .expense-table td:nth-child(1) {
-    width: 30%;
+    width: 38%;
 }
 
 .expense-table th:nth-child(2),
 .expense-table td:nth-child(2) {
-    width: 15%;
+    width: 18%;
 }
 
 .expense-table th:nth-child(3),
 .expense-table td:nth-child(3) {
-    width: 24%;
-}
-
-.expense-table th:nth-child(4),
-.expense-table td:nth-child(4) {
-    width: 31%;
+    width: 44%;
 }
 
 .expense-table td:nth-child(1) {
@@ -492,12 +544,18 @@ h2 {
 }
 
 .expense-table .row-actions {
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     justify-content: flex-start;
+    align-items: center;
 }
 
 .expense-table .row-action {
     padding: 7px 10px;
+}
+
+.expense-table .row-category-select {
+    min-width: 160px;
+    flex: 1 1 180px;
 }
 
 .row-category-select {
@@ -571,6 +629,7 @@ h2 {
 
 .category-meter {
     margin-top: 10px;
+    margin-bottom: 8px;
     height: 10px;
     width: 100%;
     border-radius: 999px;
@@ -618,8 +677,7 @@ h2 {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         grid-template-areas:
             "expense expense"
-            "income category"
-            "snapshot snapshot";
+            "income category";
     }
 
     .expense-panel .entry-form {
@@ -644,8 +702,7 @@ h2 {
         grid-template-areas:
             "expense"
             "income"
-            "category"
-            "snapshot";
+            "category";
     }
 
     .panel-wide {
@@ -654,16 +711,10 @@ h2 {
 
     body[data-panel-view="expense"] .income-panel,
     body[data-panel-view="expense"] .category-panel,
-    body[data-panel-view="expense"] .snapshot-panel,
     body[data-panel-view="income"] .expense-panel,
     body[data-panel-view="income"] .category-panel,
-    body[data-panel-view="income"] .snapshot-panel,
     body[data-panel-view="category"] .expense-panel,
-    body[data-panel-view="category"] .income-panel,
-    body[data-panel-view="category"] .snapshot-panel,
-    body[data-panel-view="snapshot"] .expense-panel,
-    body[data-panel-view="snapshot"] .income-panel,
-    body[data-panel-view="snapshot"] .category-panel {
+    body[data-panel-view="category"] .income-panel {
         display: none;
     }
 
@@ -785,4 +836,92 @@ h2 {
     .panel {
         padding: 18px;
     }
+
+    .category-expense-panels,
+    .category-summary-strip {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Old category box styles (kept for reference, can be removed) */
+.category-box {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(44, 33, 18, 0.06);
+    transition: all 0.2s ease;
+}
+
+.category-box:hover {
+    box-shadow: 0 8px 24px rgba(44, 33, 18, 0.12);
+    transform: translateY(-2px);
+}
+
+.category-box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--accent-soft);
+}
+
+.category-box-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent-strong);
+    margin: 0;
+}
+
+.category-box-total {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--muted);
+}
+
+/* Expenses List in Category Box */
+.category-expenses-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.category-expense-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: rgba(14, 124, 107, 0.04);
+    border-radius: 8px;
+    border-left: 3px solid var(--accent);
+}
+
+.expense-item-description {
+    flex: 1;
+    font-size: 0.9rem;
+    color: var(--text);
+    margin: 0;
+}
+
+.expense-item-amount {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--accent-strong);
+}
+
+.category-box-empty {
+    text-align: center;
+    padding: 20px 10px;
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+.loading-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 1rem;
 }

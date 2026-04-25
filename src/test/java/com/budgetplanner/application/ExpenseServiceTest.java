@@ -13,6 +13,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import java.util.List;
 
 class ExpenseServiceTest {
 
@@ -77,5 +78,30 @@ class ExpenseServiceTest {
 
         assertFalse(deleted);
         verify(expenseRepository).deleteById(404);
+    }
+
+    @Test
+    void getExpensesByCategoryReturnsExpensesForGivenCategory() {
+        Expense expense1 = new Expense(1, 600, 2, "Groceries");
+        Expense expense2 = new Expense(3, 450, 2, "Food delivery");
+        List<Expense> expenses = List.of(expense1, expense2);
+        when(expenseRepository.findByCategory(2)).thenReturn(expenses);
+
+        List<Expense> result = expenseService.getExpensesByCategory(2);
+
+        assertEquals(2, result.size());
+        assertEquals(600, result.get(0).getAmount());
+        assertEquals(450, result.get(1).getAmount());
+        verify(expenseRepository).findByCategory(2);
+    }
+
+    @Test
+    void getExpensesByCategoryReturnsEmptyListWhenNone() {
+        when(expenseRepository.findByCategory(999)).thenReturn(List.of());
+
+        List<Expense> result = expenseService.getExpensesByCategory(999);
+
+        assertTrue(result.isEmpty());
+        verify(expenseRepository).findByCategory(999);
     }
 }
