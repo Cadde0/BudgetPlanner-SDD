@@ -29,6 +29,15 @@ class CategoryUiAssetsTest {
         assertTrue(js.contains("delete-category"));
     }
 
+    @Test
+    void appJsContainsPerCategorySummaryRendering() throws IOException {
+        String js = readResource("/static/app.js");
+
+        assertTrue(js.contains("summary-stack"));
+        assertTrue(js.contains("category-meter"));
+        assertTrue(js.contains("% of spend"));
+    }
+
     private String readResource(String path) throws IOException {
         try (var stream = CategoryUiAssetsTest.class.getResourceAsStream(path)) {
             if (stream == null) {

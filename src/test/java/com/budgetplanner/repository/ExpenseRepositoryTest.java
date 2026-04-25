@@ -112,8 +112,43 @@ class ExpenseRepositoryTest {
         }
     }
 
+    @Test
+    void sumAmountsByCategoryReturnsAggregatedTotals() {
+        List<Integer> categoryIds = findCategoryIds(2);
+        assumeTrue(categoryIds.size() >= 2, "Test requires at least two existing category rows");
+
+        Integer firstCategoryId = categoryIds.get(0);
+        Integer secondCategoryId = categoryIds.get(1);
+
+        var baselineTotals = expenseRepository.sumAmountsByCategory();
+        int baselineFirstCategory = baselineTotals.getOrDefault(firstCategoryId, 0);
+        int baselineSecondCategory = baselineTotals.getOrDefault(secondCategoryId, 0);
+
+        Expense first = expenseRepository.save(new Expense(null, 111, firstCategoryId, "summary fixture 1"));
+        Expense second = expenseRepository.save(new Expense(null, 222, firstCategoryId, "summary fixture 2"));
+        Expense third = expenseRepository.save(new Expense(null, 50, secondCategoryId, "summary fixture 3"));
+
+        try {
+            var totals = expenseRepository.sumAmountsByCategory();
+
+            assertEquals(baselineFirstCategory + 333, totals.getOrDefault(firstCategoryId, 0));
+            assertEquals(baselineSecondCategory + 50, totals.getOrDefault(secondCategoryId, 0));
+        } finally {
+            jdbcTemplate.update("DELETE FROM expenses WHERE id = ?", first.getId());
+            jdbcTemplate.update("DELETE FROM expenses WHERE id = ?", second.getId());
+            jdbcTemplate.update("DELETE FROM expenses WHERE id = ?", third.getId());
+        }
+    }
+
     private Integer findAnyCategoryId() {
         List<Integer> ids = jdbcTemplate.query("SELECT id FROM category ORDER BY id LIMIT 1", (rs, rowNum) -> rs.getInt("id"));
         return ids.isEmpty() ? null : ids.get(0);
+    }
+
+    private List<Integer> findCategoryIds(int limit) {
+        return jdbcTemplate.query(
+                "SELECT id FROM category ORDER BY id LIMIT ?",
+                (rs, rowNum) -> rs.getInt("id"),
+                limit);
     }
 }

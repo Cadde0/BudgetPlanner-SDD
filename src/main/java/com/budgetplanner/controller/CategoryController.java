@@ -35,11 +35,7 @@ public class CategoryController {
     @GetMapping("/summaries")
     public List<CategorySummary> getCategorySummaries() {
         List<Category> categories = categoryRepository.findAll();
-        List<com.budgetplanner.model.Expense> expenses = expenseRepository.findAll();
-        java.util.Map<Integer, Integer> expenseTotals = expenses.stream()
-                .collect(java.util.stream.Collectors.groupingBy(
-                        com.budgetplanner.model.Expense::getCategoryId,
-                        java.util.stream.Collectors.summingInt(com.budgetplanner.model.Expense::getAmount)));
+        java.util.Map<Integer, Integer> expenseTotals = expenseRepository.sumAmountsByCategory();
         return categories.stream()
                 .map(cat -> new CategorySummary(
                         cat.getId(),

@@ -33,6 +33,23 @@ public class ExpenseRepository {
                 EXPENSE_ROW_MAPPER);
     }
 
+    public Map<Integer, Integer> sumAmountsByCategory() {
+        return jdbcTemplate.query(
+                "SELECT category_id, SUM(amount) AS total_amount "
+                        + "FROM expenses "
+                        + "WHERE category_id IS NOT NULL "
+                        + "GROUP BY category_id",
+                resultSet -> {
+                    Map<Integer, Integer> totalsByCategory = new java.util.HashMap<>();
+                    while (resultSet.next()) {
+                        int categoryId = resultSet.getInt("category_id");
+                        int totalAmount = resultSet.getInt("total_amount");
+                        totalsByCategory.put(categoryId, totalAmount);
+                    }
+                    return totalsByCategory;
+                });
+    }
+
     public Optional<Expense> findById(int id) {
         List<Expense> results = jdbcTemplate.query(
                 "SELECT id, amount, category_id, description FROM expenses WHERE id = ?",

@@ -1,7 +1,6 @@
 package com.budgetplanner.controller;
 
 import com.budgetplanner.model.Category;
-import com.budgetplanner.model.Expense;
 import com.budgetplanner.repository.CategoryRepository;
 import com.budgetplanner.repository.ExpenseRepository;
 import org.junit.jupiter.api.Test;
@@ -41,12 +40,9 @@ class CategoryControllerTest {
         Category food = new Category(1, "Food", 500, "Groceries and dining");
         Category travel = new Category(2, "Travel", 300, "Transport");
         List<Category> categories = Arrays.asList(food, travel);
-        List<Expense> expenses = Arrays.asList(
-                new Expense(1, 100, 1, "Lunch"),
-                new Expense(2, 50, 1, "Groceries"),
-                new Expense(3, 70, 2, "Bus ticket"));
         Mockito.when(categoryRepository.findAll()).thenReturn(categories);
-        Mockito.when(expenseRepository.findAll()).thenReturn(expenses);
+        Mockito.when(expenseRepository.sumAmountsByCategory())
+            .thenReturn(java.util.Map.of(1, 150, 2, 70));
 
         mockMvc.perform(get("/categories/summaries"))
                 .andExpect(status().isOk())

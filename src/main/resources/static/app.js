@@ -327,6 +327,15 @@ function formatAmount(value) {
   return `${currencyFormatter.format(Number(value || 0))} kr`;
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
 function renderHeroStats() {
   const totalIncome = state.incomes.reduce(
     (sum, income) => sum + Number(income.amount || 0),
@@ -519,12 +528,54 @@ function renderSnapshot() {
     0,
   );
 
+  if (!state.summaries.length) {
+    elements.snapshotGrid.innerHTML = `
+      <article class="snapshot-card">
+        <span class="metric-label">Category spend</span>
+        <div class="metric-value">${formatAmount(0)}</div>
+        <p class="snapshot-note">No category totals yet. Add expenses to populate this summary.</p>
+      </article>
+    `;
+    return;
+  }
+
+  const sortedSummaries = [...state.summaries].sort(
+    (first, second) =>
+      Number(second.totalExpense || 0) - Number(first.totalExpense || 0),
+  );
+
+  const categoryCards = sortedSummaries
+    .map((summary) => {
+      const amount = Number(summary.totalExpense || 0);
+      const share =
+        totalCategorySpend > 0
+          ? Math.round((amount / totalCategorySpend) * 100)
+          : 0;
+
+      return `
+        <article class="category-card">
+          <h3>${escapeHtml(summary.categoryName || "Uncategorized")}</h3>
+          <div class="category-figure">
+            <strong>${formatAmount(amount)}</strong>
+            <span class="category-share">${share}% of spend</span>
+          </div>
+          <div class="category-meter" aria-hidden="true">
+            <span style="width: ${share}%"></span>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
   elements.snapshotGrid.innerHTML = `
-        <article class="snapshot-card">
+        <article class="snapshot-card snapshot-overview">
             <span class="metric-label">Category spend</span>
             <div class="metric-value">${formatAmount(totalCategorySpend)}</div>
-            <p class="snapshot-note">Summed from the category summary endpoint.</p>
+            <p class="snapshot-note">Each category card shows the total amount spent in that category.</p>
         </article>
+        <div class="summary-stack" aria-label="Category expense totals">
+          ${categoryCards}
+        </div>
     `;
 }
 

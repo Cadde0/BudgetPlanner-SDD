@@ -119,7 +119,7 @@ Layer intent:
 
 **Purpose**: Implement calculation logic used for budget and summaries.
 
-- [ ] Step 1 (T031) Implement category summary calculations
+- [x] Step 1 (T031) Implement category summary calculations
 - [ ] Step 2 (T032) Implement budget arithmetic logic in application layer
 - [ ] Step 3 (T033) Run integration test for FR-008 arithmetic flow
 
