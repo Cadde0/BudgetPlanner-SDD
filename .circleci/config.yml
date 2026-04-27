@@ -26,7 +26,8 @@ jobs:
               -Dspring.datasource.username=postgres \
               -Dspring.datasource.password=postgres \
               -Dspring.jpa.hibernate.ddl-auto=create \
-              -Dspring.sql.init.mode=always
+              -Dspring.sql.init.mode=always \
+              -Dsonar.scm.disabled=true
 
 
 workflows:
