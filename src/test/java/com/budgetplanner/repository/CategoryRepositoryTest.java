@@ -14,14 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @JdbcTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class CategoryRepositoryTest {
-
-    private static final int KNOWN_CATEGORY_ID = 1;
-    private static final String EXPECTED_CATEGORY_NAME = "Home";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -34,23 +30,31 @@ class CategoryRepositoryTest {
     }
 
     @Test
-    void findAllContainsConfiguredCategoryFixture() {
-        assumeTrue(KNOWN_CATEGORY_ID > 0, "Set KNOWN_CATEGORY_ID to an existing row in your database");
+    void findAllReturnsCategories() {
+        Category seed = categoryRepository.save(new Category(null, "Test Find All " + System.nanoTime(), 1000, "test"));
 
-        List<Category> result = categoryRepository.findAll();
+        try {
+            List<Category> result = categoryRepository.findAll();
 
-        assertTrue(result.stream().anyMatch(category -> KNOWN_CATEGORY_ID == category.getId()));
+            assertTrue(!result.isEmpty());
+            assertTrue(result.stream().anyMatch(category -> seed.getId().equals(category.getId())));
+        } finally {
+            categoryRepository.deleteById(seed.getId());
+        }
     }
 
     @Test
-    void findByIdReturnsConfiguredCategoryFixture() {
-        assumeTrue(KNOWN_CATEGORY_ID > 0, "Set KNOWN_CATEGORY_ID to an existing row in your database");
-        assumeTrue(!EXPECTED_CATEGORY_NAME.isBlank(), "Set EXPECTED_CATEGORY_NAME for that fixture row");
+    void findByIdReturnsPersistedCategory() {
+        Category seed = categoryRepository.save(new Category(null, "Test Find By Id " + System.nanoTime(), 1500, "test"));
 
-        var result = categoryRepository.findById(KNOWN_CATEGORY_ID);
+        try {
+            var result = categoryRepository.findById(seed.getId());
 
-        assertTrue(result.isPresent());
-        assertEquals(EXPECTED_CATEGORY_NAME, result.get().getName());
+            assertTrue(result.isPresent());
+            assertEquals(seed.getName(), result.get().getName());
+        } finally {
+            categoryRepository.deleteById(seed.getId());
+        }
     }
 
     @Test

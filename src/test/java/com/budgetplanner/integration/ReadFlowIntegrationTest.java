@@ -12,12 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
-import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = com.budgetplanner.BudgetPlannerApplication.class)
-// @ActiveProfiles("test")
 public class ReadFlowIntegrationTest {
     @LocalServerPort
     private int port;
@@ -34,24 +31,35 @@ public class ReadFlowIntegrationTest {
 
     @Test
     void testReadFlow() {
-        // This test assumes the database already contains data.
-        // It will only read and assert the values returned by the endpoints.
+        // Create test data to ensure read operations have data to fetch
+        Category testCategory = categoryRepository.save(new Category(null, "T012 Read Test " + System.nanoTime(), 2000, "read test"));
+        Income testIncome = incomeRepository.save(new Income(null, 5000));
+        Expense testExpense = expenseRepository.save(new Expense(null, 100, testCategory.getId(), "read test expense"));
 
-        ResponseEntity<Category[]> catResp = restTemplate.getForEntity("http://localhost:" + port + "/categories",
-                Category[].class);
-        ResponseEntity<Expense[]> expResp = restTemplate.getForEntity("http://localhost:" + port + "/expenses",
-                Expense[].class);
-        ResponseEntity<Income[]> incResp = restTemplate.getForEntity("http://localhost:" + port + "/income",
-                Income[].class);
+        try {
+            ResponseEntity<Category[]> catResp = restTemplate.getForEntity("http://localhost:" + port + "/categories",
+                    Category[].class);
+            ResponseEntity<Expense[]> expResp = restTemplate.getForEntity("http://localhost:" + port + "/expenses",
+                    Expense[].class);
+            ResponseEntity<Income[]> incResp = restTemplate.getForEntity("http://localhost:" + port + "/income",
+                    Income[].class);
 
-        assertThat(catResp.getStatusCode().is2xxSuccessful()).isTrue();
-        assertThat(expResp.getStatusCode().is2xxSuccessful()).isTrue();
-        assertThat(incResp.getStatusCode().is2xxSuccessful()).isTrue();
+            assertThat(catResp.getStatusCode().is2xxSuccessful()).isTrue();
+            assertThat(expResp.getStatusCode().is2xxSuccessful()).isTrue();
+            assertThat(incResp.getStatusCode().is2xxSuccessful()).isTrue();
 
-        // Optionally, assert on returned data if you know what should be present
-        // Example:
-        assertThat(catResp.getBody()).isNotEmpty();
-        assertThat(expResp.getBody()).isNotEmpty();
-        assertThat(incResp.getBody()).isNotEmpty();
+            assertThat(catResp.getBody()).isNotEmpty();
+            assertThat(catResp.getBody()).anyMatch(c -> testCategory.getId().equals(c.getId()));
+
+            assertThat(expResp.getBody()).isNotEmpty();
+            assertThat(expResp.getBody()).anyMatch(e -> testExpense.getId().equals(e.getId()));
+
+            assertThat(incResp.getBody()).isNotEmpty();
+            assertThat(incResp.getBody()).anyMatch(i -> testIncome.getId().equals(i.getId()));
+        } finally {
+            expenseRepository.deleteById(testExpense.getId());
+            incomeRepository.deleteById(testIncome.getId());
+            categoryRepository.deleteById(testCategory.getId());
+        }
     }
 }
