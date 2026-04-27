@@ -12,9 +12,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Fetch full git history for SonarQube
-          command: git fetch --unshallow
-      - run:
           name: Wait for Postgres to be ready
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
       - run:
