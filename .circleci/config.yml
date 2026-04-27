@@ -25,7 +25,7 @@ jobs:
               -Dspring.jpa.hibernate.ddl-auto=create \
               -Dspring.sql.init.mode=always \
               -Dsonar.scm.disabled=true \
-              -Dsonar.sources=src/main/java \
+              -Dsonar.sources=src/main/java,src/main/resources/static \
               -Dsonar.tests=src/test/java
               -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
               -Dsonar.sourceEncoding=UTF-8
