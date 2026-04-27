@@ -7,11 +7,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+/**
+ * Converts controller exceptions into API error responses.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    /**
+     * Handles invalid input and returns a bad request response.
+     *
+     * @param ex the exception that was thrown
+     * @return the error response
+     */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
         LOG.warn("Handled validation error: {}", ex.getMessage());
@@ -19,6 +28,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 
+    /**
+     * Handles unexpected exceptions and returns a generic server error.
+     *
+     * @param ex the exception that was thrown
+     * @return the error response
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleUnhandled(Exception ex) {
         LOG.error("Unhandled exception in controller layer", ex);

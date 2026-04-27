@@ -12,6 +12,9 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Provides JDBC access to income records.
+ */
 @Repository
 public class IncomeRepository {
 
@@ -20,14 +23,30 @@ public class IncomeRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
+    /**
+     * Creates an income repository backed by the supplied JDBC template.
+     *
+     * @param jdbcTemplate the JDBC template to use
+     */
     public IncomeRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    /**
+     * Returns all income entries ordered by identifier.
+     *
+     * @return all income entries
+     */
     public List<Income> findAll() {
         return jdbcTemplate.query("SELECT id, amount FROM income ORDER BY id", INCOME_ROW_MAPPER);
     }
 
+    /**
+     * Returns the income entry for the supplied identifier.
+     *
+     * @param id the income identifier
+     * @return the matching income entry, if any
+     */
     public Optional<Income> findById(int id) {
         List<Income> results = jdbcTemplate.query(
                 "SELECT id, amount FROM income WHERE id = ?",
@@ -36,6 +55,12 @@ public class IncomeRepository {
         return results.stream().findFirst();
     }
 
+    /**
+     * Stores a new income entry and returns the persisted record.
+     *
+     * @param income the income entry to persist
+     * @return the persisted income entry
+     */
     public Income save(Income income) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
@@ -57,6 +82,13 @@ public class IncomeRepository {
         return new Income(id, income.getAmount());
     }
 
+    /**
+     * Updates an existing income entry.
+     *
+     * @param id the income identifier
+     * @param income the updated income data
+     * @return the updated income entry, if found
+     */
     public Optional<Income> update(int id, Income income) {
         int updatedRows = jdbcTemplate.update(
                 "UPDATE income SET amount = ? WHERE id = ?",
@@ -70,6 +102,12 @@ public class IncomeRepository {
         return Optional.of(new Income(id, income.getAmount()));
     }
 
+    /**
+     * Deletes the income entry with the supplied identifier.
+     *
+     * @param id the income identifier
+     * @return {@code true} when an income entry was deleted
+     */
     public boolean deleteById(int id) {
         return jdbcTemplate.update("DELETE FROM income WHERE id = ?", id) > 0;
     }

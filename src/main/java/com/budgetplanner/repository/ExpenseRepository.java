@@ -12,6 +12,9 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Provides JDBC access to expense records.
+ */
 @Repository
 public class ExpenseRepository {
 
@@ -23,16 +26,31 @@ public class ExpenseRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
+    /**
+     * Creates an expense repository backed by the supplied JDBC template.
+     *
+     * @param jdbcTemplate the JDBC template to use
+     */
     public ExpenseRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    /**
+     * Returns all expenses ordered by identifier.
+     *
+     * @return all expenses
+     */
     public List<Expense> findAll() {
         return jdbcTemplate.query(
                 "SELECT id, amount, category_id, description FROM expenses ORDER BY id",
                 EXPENSE_ROW_MAPPER);
     }
 
+    /**
+     * Returns the total expense amount grouped by category identifier.
+     *
+     * @return totals keyed by category identifier
+     */
     public Map<Integer, Integer> sumAmountsByCategory() {
         return jdbcTemplate.query(
                 "SELECT category_id, SUM(amount) AS total_amount "
@@ -50,6 +68,12 @@ public class ExpenseRepository {
                 });
     }
 
+    /**
+     * Returns the expense for the supplied identifier.
+     *
+     * @param id the expense identifier
+     * @return the matching expense, if any
+     */
     public Optional<Expense> findById(int id) {
         List<Expense> results = jdbcTemplate.query(
                 "SELECT id, amount, category_id, description FROM expenses WHERE id = ?",
@@ -58,6 +82,12 @@ public class ExpenseRepository {
         return results.stream().findFirst();
     }
 
+    /**
+     * Stores a new expense and returns the persisted record.
+     *
+     * @param expense the expense to persist
+     * @return the persisted expense
+     */
     public Expense save(Expense expense) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
@@ -75,6 +105,12 @@ public class ExpenseRepository {
         return new Expense(id, expense.getAmount(), expense.getCategoryId(), expense.getDescription());
     }
 
+    /**
+     * Resolves the generated key from the insert operation.
+     *
+     * @param keyHolder the key holder populated by the insert
+     * @return the generated identifier, or {@code null} when unavailable
+     */
     private Number resolveGeneratedId(KeyHolder keyHolder) {
         Map<String, Object> generatedKeys = keyHolder.getKeys();
         if (generatedKeys == null || generatedKeys.isEmpty()) {
@@ -96,6 +132,13 @@ public class ExpenseRepository {
         return keyHolder.getKey();
     }
 
+    /**
+     * Updates only the category assignment for the supplied expense.
+     *
+     * @param id the expense identifier
+     * @param categoryId the category identifier to assign
+     * @return the updated expense, if found
+     */
     public Optional<Expense> updateCategory(int id, int categoryId) {
         int updated = jdbcTemplate.update(
                 "UPDATE expenses SET category_id = ? WHERE id = ?",
@@ -108,6 +151,13 @@ public class ExpenseRepository {
         }
     }
 
+    /**
+     * Updates an existing expense.
+     *
+     * @param id the expense identifier
+     * @param expense the updated expense data
+     * @return the updated expense, if found
+     */
     public Optional<Expense> updateExpense(int id, Expense expense) {
         int updated = jdbcTemplate.update(
                 "UPDATE expenses SET amount = ?, category_id = ?, description = ? WHERE id = ?",
@@ -122,6 +172,12 @@ public class ExpenseRepository {
         }
     }
 
+    /**
+     * Deletes the expense with the supplied identifier.
+     *
+     * @param id the expense identifier
+     * @return {@code true} when an expense was deleted
+     */
     public boolean deleteById(int id) {
         return jdbcTemplate.update("DELETE FROM expenses WHERE id = ?", id) > 0;
     }
