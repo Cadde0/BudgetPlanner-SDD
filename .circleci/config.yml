@@ -24,7 +24,9 @@ jobs:
               -Dspring.datasource.password=postgres \
               -Dspring.jpa.hibernate.ddl-auto=create \
               -Dspring.sql.init.mode=always \
-              -Dsonar.scm.disabled=true
+              -Dsonar.scm.disabled=true \
+              -Dsonar.sources=src/main/java \
+              -Dsonar.tests=src/test/java
 
 
 workflows:
