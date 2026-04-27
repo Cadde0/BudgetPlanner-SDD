@@ -12,6 +12,9 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Provides JDBC access to category records.
+ */
 @Repository
 public class CategoryRepository {
 
@@ -23,16 +26,32 @@ public class CategoryRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
+    /**
+     * Creates a category repository backed by the supplied JDBC template.
+     *
+     * @param jdbcTemplate the JDBC template to use
+     */
     public CategoryRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    /**
+     * Returns all categories ordered by identifier.
+     *
+     * @return all categories
+     */
     public List<Category> findAll() {
         return jdbcTemplate.query(
                 "SELECT id, name, category_limit, description FROM category ORDER BY id",
                 CATEGORY_ROW_MAPPER);
     }
 
+    /**
+     * Returns the category for the supplied identifier.
+     *
+     * @param id the category identifier
+     * @return the matching category, if any
+     */
     public Optional<Category> findById(int id) {
         List<Category> results = jdbcTemplate.query(
                 "SELECT id, name, category_limit, description FROM category WHERE id = ?",
@@ -41,6 +60,12 @@ public class CategoryRepository {
         return results.stream().findFirst();
     }
 
+    /**
+     * Stores a new category and returns the persisted record.
+     *
+     * @param category the category to persist
+     * @return the persisted category
+     */
     public Category save(Category category) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
@@ -98,6 +123,13 @@ public class CategoryRepository {
         return null;
     }
 
+    /**
+     * Updates an existing category.
+     *
+     * @param id the category identifier
+     * @param category the updated category data
+     * @return the updated category, if found
+     */
     public Optional<Category> update(int id, Category category) {
         int updatedRows = jdbcTemplate.update(
                 "UPDATE category SET name = ?, category_limit = ?, description = ? WHERE id = ?",
@@ -113,6 +145,12 @@ public class CategoryRepository {
         return findById(id);
     }
 
+    /**
+     * Deletes the category with the supplied identifier.
+     *
+     * @param id the category identifier
+     * @return {@code true} when a category was deleted
+     */
     public boolean deleteById(int id) {
         return jdbcTemplate.update("DELETE FROM category WHERE id = ?", id) > 0;
     }

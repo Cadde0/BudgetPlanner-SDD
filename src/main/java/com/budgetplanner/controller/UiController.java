@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class UiController {
 
+    /**
+     * Forwards the UI routes to the static index page.
+     *
+     * @return the forward target
+     */
     @GetMapping({ "/", "/budget" })
     public String home() {
         return "forward:/index.html";

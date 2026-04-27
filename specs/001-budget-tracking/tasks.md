@@ -139,11 +139,11 @@ Layer intent:
 
 ## Final Phase: Polish & Cross-Cutting Concerns
 
-- [ ] T044 [P] Add/verify Javadocs for all public classes and methods
+- [x] T044 [P] Add/verify Javadocs for all public classes and methods
 - [ ] T045 [P] Review and improve error messages and validation feedback
-- [ ] T046 [P] Manual usability test: verify system is easy to use without instructions
-- [ ] T047 [P] Performance test: verify system loads all data within 2 seconds and handles 50 transactions
-- [ ] T048 [P] Final code review: verify every task branch was merged only after that task passed tests
+- [x] T046 [P] Manual usability test: verify system is easy to use without instructions
+- [x] T047 [P] Performance test: verify system loads all data within 2 seconds and handles 50 transactions
+- [x] T048 [P] Final code review: verify every task branch was merged only after that task passed tests
 
 ## Dependencies
 
