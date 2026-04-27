@@ -27,7 +27,9 @@ jobs:
               -Dsonar.scm.disabled=true \
               -Dsonar.sources=src/main/java \
               -Dsonar.tests=src/test/java
-              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+              -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+              -Dsonar.sourceEncoding=UTF-8
+
 
 
 workflows:
