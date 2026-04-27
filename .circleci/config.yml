@@ -5,7 +5,6 @@ jobs:
     docker:
       - image: 'cimg/openjdk:17.0'
       - image: 'cimg/postgres:17.0'
-        command: ['-p', '5434']
         environment:
           POSTGRES_DB: BudgetPlanner
           POSTGRES_USER: postgres
@@ -13,8 +12,16 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Wait for Postgres to be ready
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
           name: Analyze on SonarQube Cloud
-          command: mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Cadde0_BudgetPlanner-SDD
+          command: |
+            mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+              -Dsonar.projectKey=Cadde0_BudgetPlanner-SDD \
+              -Dspring.datasource.url=jdbc:postgresql://localhost:5432/BudgetPlanner \
+              -Dspring.datasource.username=postgres \
+              -Dspring.datasource.password=postgres
 
 workflows:
   main:
