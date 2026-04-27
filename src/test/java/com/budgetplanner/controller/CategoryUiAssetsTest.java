@@ -35,7 +35,7 @@ class CategoryUiAssetsTest {
 
         assertTrue(js.contains("category-summary-strip"));
         assertTrue(js.contains("category-meter"));
-        assertTrue(js.contains("of spend"));
+        assertTrue(js.contains("of total expenses"));
     }
 
     @Test

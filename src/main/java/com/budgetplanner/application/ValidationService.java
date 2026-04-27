@@ -44,7 +44,7 @@ public class ValidationService {
             return;
         }
         if (categoryLimit < 0) {
-            failValidation("Category limit cannot be negative.");
+            failValidation("Category limit must be 0 or greater.");
         }
     }
 
@@ -55,7 +55,7 @@ public class ValidationService {
      */
     public void validateCategoryId(Integer categoryId) {
         if (categoryId == null || categoryId <= 0) {
-            failValidation("Category ID must be a positive integer.");
+            failValidation("Category ID is required and must be greater than 0.");
         }
     }
 
@@ -67,7 +67,7 @@ public class ValidationService {
      */
     public void validateCategoryNameUnique(String categoryName, Collection<String> existingCategoryNames) {
         if (categoryName == null || categoryName.isBlank()) {
-            failValidation("Category name cannot be empty.");
+            failValidation("Category name is required. Enter a non-empty category name.");
         }
 
         if (existingCategoryNames == null) {
@@ -77,18 +77,18 @@ public class ValidationService {
         String normalizedCandidate = normalize(categoryName);
         for (String existingName : existingCategoryNames) {
             if (existingName != null && normalize(existingName).equals(normalizedCandidate)) {
-                failValidation("Category name must be unique.");
+                failValidation("Category name already exists. Choose a different name.");
             }
         }
     }
 
     private void validatePositiveAmount(Integer amount, String fieldName) {
         if (amount == null) {
-            failValidation(fieldName + " is required.");
+            failValidation(fieldName + " is required. Enter a value greater than 0.");
         }
 
         if (amount <= 0) {
-            failValidation(fieldName + " must be positive.");
+            failValidation(fieldName + " must be greater than 0.");
         }
     }
 

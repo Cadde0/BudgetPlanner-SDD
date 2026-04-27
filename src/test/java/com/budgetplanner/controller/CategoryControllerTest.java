@@ -1,5 +1,6 @@
 package com.budgetplanner.controller;
 
+import com.budgetplanner.application.ExpenseService;
 import com.budgetplanner.model.Category;
 import com.budgetplanner.repository.CategoryRepository;
 import com.budgetplanner.repository.ExpenseRepository;
@@ -34,6 +35,8 @@ class CategoryControllerTest {
     private CategoryRepository categoryRepository;
     @MockBean
     private ExpenseRepository expenseRepository;
+    @MockBean
+    private ExpenseService expenseService;
 
     @Test
     void testGetCategorySummaries() throws Exception {

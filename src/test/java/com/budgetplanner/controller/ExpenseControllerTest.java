@@ -78,7 +78,7 @@ class ExpenseControllerTest {
     @Test
     void createExpenseReturnsBadRequestWhenCategoryIdMissing() throws Exception {
         when(expenseService.createExpense(org.mockito.ArgumentMatchers.any(Expense.class)))
-                .thenThrow(new IllegalArgumentException("Category ID must be a positive integer."));
+                                .thenThrow(new IllegalArgumentException("Category ID is required and must be greater than 0."));
 
         mockMvc.perform(post("/expenses")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -88,22 +88,22 @@ class ExpenseControllerTest {
                         "}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("BAD_REQUEST"))
-                .andExpect(jsonPath("$.message").value("Category ID must be a positive integer."));
+                .andExpect(jsonPath("$.message").value("Category ID is required and must be greater than 0."));
     }
 
-        @Test
-        void deleteExpenseReturnsNoContentWhenFound() throws Exception {
-                when(expenseService.deleteExpense(1)).thenReturn(true);
+    @Test
+    void deleteExpenseReturnsNoContentWhenFound() throws Exception {
+        when(expenseService.deleteExpense(1)).thenReturn(true);
 
-                mockMvc.perform(delete("/expenses/1"))
-                                .andExpect(status().isNoContent());
-        }
+        mockMvc.perform(delete("/expenses/1"))
+                .andExpect(status().isNoContent());
+    }
 
-        @Test
-        void deleteExpenseReturnsNotFoundWhenMissing() throws Exception {
-                when(expenseService.deleteExpense(999)).thenReturn(false);
+    @Test
+    void deleteExpenseReturnsNotFoundWhenMissing() throws Exception {
+        when(expenseService.deleteExpense(999)).thenReturn(false);
 
-                mockMvc.perform(delete("/expenses/999"))
-                                .andExpect(status().isNotFound());
-        }
+        mockMvc.perform(delete("/expenses/999"))
+                .andExpect(status().isNotFound());
+    }
 }

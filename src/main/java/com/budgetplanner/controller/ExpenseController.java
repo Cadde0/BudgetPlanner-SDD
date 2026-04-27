@@ -82,7 +82,7 @@ public class ExpenseController {
     @PutMapping("/{id}/category")
     public ResponseEntity<Expense> assignCategory(@PathVariable int id, @RequestBody CategoryAssignmentRequest request) {
         if (request == null || request.categoryId() == null) {
-            throw new IllegalArgumentException("Category ID must be a positive integer.");
+            throw new IllegalArgumentException("Category assignment requires a categoryId value.");
         }
         return expenseService.assignCategory(id, request.categoryId())
                 .map(ResponseEntity::ok)

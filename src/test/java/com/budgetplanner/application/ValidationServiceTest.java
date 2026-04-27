@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ValidationServiceTest {
@@ -20,17 +21,35 @@ class ValidationServiceTest {
     @Test
     void incomeAmountMustBePositive() {
         assertDoesNotThrow(() -> validationService.validateIncomeAmount(1000));
-        assertThrows(IllegalArgumentException.class, () -> validationService.validateIncomeAmount(null));
-        assertThrows(IllegalArgumentException.class, () -> validationService.validateIncomeAmount(0));
-        assertThrows(IllegalArgumentException.class, () -> validationService.validateIncomeAmount(-1));
+
+        IllegalArgumentException missingAmount = assertThrows(IllegalArgumentException.class,
+                () -> validationService.validateIncomeAmount(null));
+        assertEquals("Income amount is required. Enter a value greater than 0.", missingAmount.getMessage());
+
+        IllegalArgumentException zeroAmount = assertThrows(IllegalArgumentException.class,
+                () -> validationService.validateIncomeAmount(0));
+        assertEquals("Income amount must be greater than 0.", zeroAmount.getMessage());
+
+        IllegalArgumentException negativeAmount = assertThrows(IllegalArgumentException.class,
+                () -> validationService.validateIncomeAmount(-1));
+        assertEquals("Income amount must be greater than 0.", negativeAmount.getMessage());
     }
 
     @Test
     void expenseAmountMustBePositive() {
         assertDoesNotThrow(() -> validationService.validateExpenseAmount(50));
-        assertThrows(IllegalArgumentException.class, () -> validationService.validateExpenseAmount(null));
-        assertThrows(IllegalArgumentException.class, () -> validationService.validateExpenseAmount(0));
-        assertThrows(IllegalArgumentException.class, () -> validationService.validateExpenseAmount(-5));
+
+        IllegalArgumentException missingAmount = assertThrows(IllegalArgumentException.class,
+                () -> validationService.validateExpenseAmount(null));
+        assertEquals("Expense amount is required. Enter a value greater than 0.", missingAmount.getMessage());
+
+        IllegalArgumentException zeroAmount = assertThrows(IllegalArgumentException.class,
+                () -> validationService.validateExpenseAmount(0));
+        assertEquals("Expense amount must be greater than 0.", zeroAmount.getMessage());
+
+        IllegalArgumentException negativeAmount = assertThrows(IllegalArgumentException.class,
+                () -> validationService.validateExpenseAmount(-5));
+        assertEquals("Expense amount must be greater than 0.", negativeAmount.getMessage());
     }
 
     @Test
@@ -38,20 +57,26 @@ class ValidationServiceTest {
         assertDoesNotThrow(() -> validationService.validateCategoryLimit(null));
         assertDoesNotThrow(() -> validationService.validateCategoryLimit(0));
         assertDoesNotThrow(() -> validationService.validateCategoryLimit(300));
-        assertThrows(IllegalArgumentException.class, () -> validationService.validateCategoryLimit(-10));
+
+        IllegalArgumentException negativeLimit = assertThrows(IllegalArgumentException.class,
+                () -> validationService.validateCategoryLimit(-10));
+        assertEquals("Category limit must be 0 or greater.", negativeLimit.getMessage());
     }
 
     @Test
     void categoryNameMustBeUniqueIgnoringCaseAndWhitespace() {
         assertDoesNotThrow(() -> validationService.validateCategoryNameUnique("Transport", List.of("Food", "Bills")));
-        assertThrows(IllegalArgumentException.class,
+
+        IllegalArgumentException duplicateName = assertThrows(IllegalArgumentException.class,
                 () -> validationService.validateCategoryNameUnique(" transport ", List.of("Transport", "Food")));
+        assertEquals("Category name already exists. Choose a different name.", duplicateName.getMessage());
     }
 
     @Test
     void categoryNameCannotBeBlank() {
-        assertThrows(IllegalArgumentException.class,
+        IllegalArgumentException blankName = assertThrows(IllegalArgumentException.class,
                 () -> validationService.validateCategoryNameUnique("   ", List.of("Food")));
+        assertEquals("Category name is required. Enter a non-empty category name.", blankName.getMessage());
     }
 
     @Test
