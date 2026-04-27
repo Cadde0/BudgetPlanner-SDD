@@ -21,7 +21,9 @@ jobs:
               -Dsonar.projectKey=Cadde0_BudgetPlanner-SDD \
               -Dspring.datasource.url=jdbc:postgresql://localhost:5432/BudgetPlanner \
               -Dspring.datasource.username=postgres \
-              -Dspring.datasource.password=postgres
+              -Dspring.datasource.password=postgres \
+              -Dspring.jpa.hibernate.ddl-auto=create
+
 
 workflows:
   main:
