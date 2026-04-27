@@ -26,7 +26,8 @@ jobs:
               -Dspring.sql.init.mode=always \
               -Dsonar.scm.disabled=true \
               -Dsonar.sources=src/main/java,src/main/resources/static \
-              -Dsonar.tests=src/test/java
+              -Dsonar.tests=src/test/java \
+              -Dsonar.coverage.exclusions=src/main/resources/static/** \
               -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
               -Dsonar.sourceEncoding=UTF-8
 
