@@ -144,6 +144,7 @@ Layer intent:
 - [x] T046 [P] Manual usability test: verify system is easy to use without instructions
 - [x] T047 [P] Performance test: verify system loads all data within 2 seconds and handles 50 transactions
 - [x] T048 [P] Final code review: verify every task branch was merged only after that task passed tests
+- [x] T049 [P] Add end-to-end system tests for full budget workflow and validation behavior
 
 ## Dependencies
 
