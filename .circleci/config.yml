@@ -9,7 +9,12 @@ jobs:
       - run:
           name: Analyze on SonarQube Cloud
           command: mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Cadde0_BudgetPlanner-SDD
-
+    services:
+      - postgres:14
+        environment:
+          POSTGRES_DB: jdbc:postgresql://localhost:5434/BudgetPlanner
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
 workflows:
   main:
     jobs:
