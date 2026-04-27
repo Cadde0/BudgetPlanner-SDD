@@ -1,0 +1,17 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: 'cimg/openjdk:17.0'
+    steps:
+      - checkout
+      - run:
+          name: Analyze on SonarQube Cloud
+          command: mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Cadde0_BudgetPlanner-SDD
+
+workflows:
+  main:
+    jobs:
+      - build:
+          context: SonarCloud
